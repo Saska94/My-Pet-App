@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context=".NewUserActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="casual"
+            android:gravity="center"
+            android:text="Create new user"
+            android:textColor="@color/baseColor"
+            android:textSize="30sp" />
+
+        <EditText
+            android:id="@+id/usernameSignIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.5"
+            android:backgroundTint="@color/baseColor"
+            android:ems="10"
+            android:fontFamily="casual"
+            android:hint="username"
+            android:inputType="textPersonName"
+            android:textColorHint="@color/buttonColor"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/passwordSignIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.5"
+            android:backgroundTint="@color/baseColor"
+            android:ems="10"
+            android:fontFamily="casual"
+            android:hint="password"
+            android:inputType="textPassword"
+            android:textColorHint="@color/buttonColor"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.5"
+            android:backgroundTint="@color/baseColor"
+            android:ems="10"
+            android:fontFamily="casual"
+            android:hint="email"
+            android:inputType="text"
+            android:textColorHint="@color/buttonColor"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/confirmationCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.5"
+            android:backgroundTint="@color/baseColor"
+            android:ems="10"
+            android:enabled="false"
+            android:fontFamily="casual"
+            android:hint="confirmation code"
+            android:inputType="textPersonName"
+            android:textColorHint="@color/buttonColor"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/createUserBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_style"
+                android:fontFamily="casual"
+                android:gravity="center"
+                android:onClick="signUp"
+                android:text="Create"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/confirmUserBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_style"
+                android:fontFamily="casual"
+                android:text="Confirm"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:enabled="false"
+                android:onClick="confirmCode"/>
+
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

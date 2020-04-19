@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context=".RegisterActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5" />
+
+        <TextView
+            android:id="@+id/info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="casual"
+            android:gravity="center"
+            android:text="This is your first login. Please fill in the information."
+            android:textColor="@color/baseColor"
+            android:textSize="24sp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="15dp">
+
+                <EditText
+                    android:id="@+id/registerName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:layout_weight="0.5"
+                    android:backgroundTint="@color/baseColor"
+                    android:ems="10"
+                    android:fontFamily="casual"
+                    android:hint="name"
+                    android:inputType="textPersonName"
+                    android:textColorHint="@color/buttonColor"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/registerSurname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:layout_weight="0.5"
+                    android:backgroundTint="@color/baseColor"
+                    android:ems="10"
+                    android:fontFamily="casual"
+                    android:hint="surname"
+                    android:inputType="textPersonName"
+                    android:textColorHint="@color/buttonColor"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/registerNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:layout_weight="0.5"
+                    android:backgroundTint="@color/baseColor"
+                    android:ems="10"
+                    android:fontFamily="casual"
+                    android:hint="phone number"
+                    android:inputType="textPersonName"
+                    android:textColorHint="@color/buttonColor"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+        </ScrollView>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancelButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_style"
+                android:fontFamily="casual"
+                android:gravity="center"
+                android:onClick="cancel"
+                android:text="Cancel"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/continueButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_style"
+                android:fontFamily="casual"
+                android:text="Continue"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:onClick="register"/>
+
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
