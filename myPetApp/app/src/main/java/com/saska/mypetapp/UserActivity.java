@@ -1,10 +1,13 @@
 package com.saska.mypetapp;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.amazonaws.mobile.client.AWSMobileClient;
 import com.saska.mypetapp.db.User;
 
 public class UserActivity extends AppCompatActivity {
@@ -18,9 +21,16 @@ public class UserActivity extends AppCompatActivity {
 
         activeUser = (User) getIntent().getSerializableExtra("USER");
 
-        TextView test = (TextView) findViewById(R.id.test);
-        String aaa = test.getText().toString().concat(activeUser.getName());
-        test.setText(aaa);
+        TextView welcomeText = (TextView) findViewById(R.id.welcomeText);
+        String newText = welcomeText.getText().toString().concat(activeUser.getName()).concat("!");
+        welcomeText.setText(newText);
 
     }
+
+    public void logOut(View view){
+            AWSMobileClient.getInstance().signOut();
+            Intent i = new Intent(UserActivity.this, MainActivity.class);
+            startActivity(i);
+    }
+
 }

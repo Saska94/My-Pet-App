@@ -76,8 +76,7 @@ public class DBHelper {
             @Override
             public void onResponse(@Nonnull Response<ListUsersQuery.Data> response) {
                 Log.i(CLASS_NAME, "Success");
-                user = new ArrayList<>(response.data().listUsers().items()).get(0);
-                Log.i(CLASS_NAME, "FOUND USER : " + user.name());
+                user = response.data().listUsers().items().isEmpty()? null : new ArrayList<>(response.data().listUsers().items()).get(0);
                 countDownLatch.countDown();
             }
 
@@ -106,10 +105,7 @@ public class DBHelper {
                 e.printStackTrace();
             }
         }
-
-
         return user;
-
     }
 
     public static void createUser(boolean wait, String username, String name, String surname, String phone){
