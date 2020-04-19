@@ -16,7 +16,6 @@ import com.saska.mypetapp.helper.Toaster;
 import com.saska.mypetapp.services.AwsClient;
 
 import java.util.ArrayList;
-import java.util.concurrent.CountDownLatch;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,13 +53,8 @@ public class MainActivity extends AppCompatActivity {
         }
         else{
             //get the user from DB
-            try {
-                final CountDownLatch loginLatch = new CountDownLatch (1);
-                awsClient.signIn(loginLatch, username,password);
-                loginLatch.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
+            if(awsClient.signIn(true, username, password)){
 
             ListUsersQuery.Item user = DBHelper.getUserByUsername(true, username);
             if (user == null){
@@ -78,12 +72,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
-
-
+        }
     }
 
-
-    private String getUser(String username){
-        return null;
-    }
 }

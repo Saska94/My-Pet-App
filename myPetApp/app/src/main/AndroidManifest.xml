@@ -16,13 +16,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".RegisterActivity"></activity>
+        <activity android:name=".RegisterActivity"
+            android:windowSoftInputMode="adjustPan"></activity>
         <activity android:name=".UserActivity" />
-        <activity android:name=".NewUserActivity" />
+        <activity android:name=".NewUserActivity"
+            android:windowSoftInputMode="adjustPan|adjustResize"/>
 
         <service android:name="org.eclipse.paho.android.service.MqttService" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:windowSoftInputMode="adjustPan|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -34,6 +34,7 @@ public class AwsClient {
     private Activity activity;
     private String CLASS_NAME;
     private Toaster toaster;
+    private boolean signInResultFlag;
 
     public AwsClient(Activity activity) {
         this.activity = activity;
@@ -175,7 +176,11 @@ public class AwsClient {
     }
 
 
-    public void signIn(final CountDownLatch loginLatch, String username, String password) {
+    public boolean signIn(boolean wait, String username, String password) {
+
+        signInResultFlag = false;
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+
         AWSMobileClient.getInstance().signIn(username, password, null, new Callback<SignInResult>() {
             @Override
             public void onResult(final SignInResult signInResult) {
@@ -185,7 +190,7 @@ public class AwsClient {
                         Log.d(CLASS_NAME, "Sign-in callback state: " + signInResult.getSignInState());
                         switch (signInResult.getSignInState()) {
                             case DONE:
-                                toaster.make("Sign-in done.");
+                                Log.i(CLASS_NAME, "Sign-in done");
                                 break;
                             case SMS_MFA:
                                 toaster.make("Please confirm sign-in with SMS.");
@@ -199,15 +204,33 @@ public class AwsClient {
                         }
                     }
                 });
-                loginLatch.countDown();
+                signInResultFlag = true;
+                countDownLatch.countDown();
             }
 
             @Override
-            public void onError(Exception e) {
-                Log.e(CLASS_NAME, "Sign-in error", e);
-                loginLatch.countDown();
+            public void onError(final Exception e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e(CLASS_NAME, "Sign-in error", e);
+                        toaster.make("Incorrect username or password");
+                    }
+                });
+                signInResultFlag = false;
+                countDownLatch.countDown();
             }
         });
+
+        if (wait){
+            try {
+                countDownLatch.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return signInResultFlag;
+
     }
 
 
