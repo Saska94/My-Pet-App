@@ -22,7 +22,7 @@ public class User implements Serializable {
     public User(ListUsersQuery.Item user){
         this.name = user.name();
         this.surname = user.surname();
-        this.username = user.surname();
+        this.username = user.username();
         this.phone = user.phone();
         this.type = user.type();
     }

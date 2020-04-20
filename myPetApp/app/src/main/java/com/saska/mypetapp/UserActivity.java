@@ -22,7 +22,7 @@ public class UserActivity extends AppCompatActivity {
         activeUser = (User) getIntent().getSerializableExtra("USER");
 
         TextView welcomeText = (TextView) findViewById(R.id.welcomeText);
-        String newText = welcomeText.getText().toString().concat(activeUser.getName()).concat("!");
+        String newText = welcomeText.getText().toString().concat(" ").concat(activeUser.getName()).concat("!");
         welcomeText.setText(newText);
 
     }
@@ -31,6 +31,12 @@ public class UserActivity extends AppCompatActivity {
             AWSMobileClient.getInstance().signOut();
             Intent i = new Intent(UserActivity.this, MainActivity.class);
             startActivity(i);
+    }
+
+    public void goToEditProfile(View view){
+        Intent i = new Intent(UserActivity.this, EditProfile.class);
+        i.putExtra("USER", activeUser);
+        startActivity(i);
     }
 
 }
