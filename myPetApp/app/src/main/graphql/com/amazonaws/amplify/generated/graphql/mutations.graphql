@@ -10,6 +10,7 @@ mutation CreateUser(
     username
     phone
     type
+    profilePicture
   }
 }
 mutation UpdateUser(
@@ -23,6 +24,7 @@ mutation UpdateUser(
     username
     phone
     type
+    profilePicture
   }
 }
 mutation DeleteUser(
@@ -36,5 +38,6 @@ mutation DeleteUser(
     username
     phone
     type
+    profilePicture
   }
 }

@@ -7,6 +7,7 @@ query GetUser($id: ID!) {
     username
     phone
     type
+    profilePicture
   }
 }
 query ListUsers(
@@ -22,6 +23,7 @@ query ListUsers(
       username
       phone
       type
+      profilePicture
     }
     nextToken
   }

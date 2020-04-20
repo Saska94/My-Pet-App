@@ -6,25 +6,28 @@ import java.io.Serializable;
 
 public class User implements Serializable {
 
-    private String idUser, name, surname, username, phone;
+    private String idUser, name, surname, username, phone, profilePicture;
     private int type;
 
     public User(){}
 
-    public User(String name, String surname, String username, String phone, int type) {
+    public User(String name, String surname, String username, String phone, int type, String profilePicture) {
         this.name = name;
         this.surname = surname;
         this.username = username;
         this.phone = phone;
         this.type = type;
+        this.profilePicture = profilePicture;
     }
 
     public User(ListUsersQuery.Item user){
+        this.idUser = user.id();
         this.name = user.name();
         this.surname = user.surname();
         this.username = user.username();
         this.phone = user.phone();
         this.type = user.type();
+        this.profilePicture = user.profilePicture();
     }
 
     public String getIdUser() {
@@ -75,4 +78,11 @@ public class User implements Serializable {
         this.type = type;
     }
 
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
+    }
 }

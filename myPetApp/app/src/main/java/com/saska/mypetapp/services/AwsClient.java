@@ -3,29 +3,42 @@ package com.saska.mypetapp.services;
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
+import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import com.amazonaws.amplify.generated.graphql.ListUsersQuery;
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobile.client.Callback;
+import com.amazonaws.mobile.client.SignOutOptions;
 import com.amazonaws.mobile.client.UserStateDetails;
 import com.amazonaws.mobile.client.results.SignInResult;
 import com.amazonaws.mobile.client.results.SignUpResult;
 import com.amazonaws.mobile.client.results.UserCodeDeliveryDetails;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.amazonaws.services.cognitoidentityprovider.model.InvalidPasswordException;
 import com.amazonaws.services.cognitoidentityprovider.model.UsernameExistsException;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.saska.mypetapp.MainActivity;
 import com.saska.mypetapp.RegisterActivity;
 import com.saska.mypetapp.UserActivity;
 import com.saska.mypetapp.db.DBHelper;
 import com.saska.mypetapp.db.User;
+import com.saska.mypetapp.helper.Helper;
+import com.saska.mypetapp.helper.LoginHelper;
 import com.saska.mypetapp.helper.Toaster;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
 import static com.amazonaws.mobile.auth.core.internal.util.ThreadUtils.runOnUiThread;
 
@@ -34,12 +47,13 @@ public class AwsClient {
     private Activity activity;
     private String CLASS_NAME;
     private Toaster toaster;
-    private boolean signInResultFlag;
+    private LoginHelper loginHelper;
 
     public AwsClient(Activity activity) {
         this.activity = activity;
         CLASS_NAME = getClass().getName();
         toaster = new Toaster(activity);
+        loginHelper = new LoginHelper(activity);
     }
 
     public void initialize() {
@@ -175,11 +189,25 @@ public class AwsClient {
         });
     }
 
+    public static void signOut(final Activity activity, final ProgressBar progressBar, final Window window){
+        AWSMobileClient.getInstance().signOut(SignOutOptions.builder().signOutGlobally(true).build(), new Callback<Void>() {
+            @Override
+            public void onResult(final Void result) {
+                LoginHelper.proceedLogout(activity);
+                progressBar.setVisibility(View.INVISIBLE);
+                Helper.unblockTouch(window);
+            }
 
-    public boolean signIn(boolean wait, String username, String password) {
+            @Override
+            public void onError(Exception e) {
+                progressBar.setVisibility(View.INVISIBLE);
+                Helper.unblockTouch(window);
+            }
+        });
+    }
 
-        signInResultFlag = false;
-        final CountDownLatch countDownLatch = new CountDownLatch(1);
+
+    public void signIn(final ProgressBar progressBar, final Window window, final String username, String password) {
 
         AWSMobileClient.getInstance().signIn(username, password, null, new Callback<SignInResult>() {
             @Override
@@ -191,6 +219,9 @@ public class AwsClient {
                         switch (signInResult.getSignInState()) {
                             case DONE:
                                 Log.i(CLASS_NAME, "Sign-in done");
+                                loginHelper.proceedLogin(username);
+                                progressBar.setVisibility(View.INVISIBLE);
+                                Helper.unblockTouch(window);
                                 break;
                             case SMS_MFA:
                                 toaster.make("Please confirm sign-in with SMS.");
@@ -204,8 +235,6 @@ public class AwsClient {
                         }
                     }
                 });
-                signInResultFlag = true;
-                countDownLatch.countDown();
             }
 
             @Override
@@ -214,24 +243,70 @@ public class AwsClient {
                     @Override
                     public void run() {
                         Log.e(CLASS_NAME, "Sign-in error", e);
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(window);
                         toaster.make("Incorrect username or password");
                     }
                 });
-                signInResultFlag = false;
-                countDownLatch.countDown();
             }
         });
-
-        if (wait){
-            try {
-                countDownLatch.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        return signInResultFlag;
 
     }
 
 
+    public void uploadWithTransferUtility() {
+
+        TransferUtility transferUtility =
+                TransferUtility.builder()
+                        .context(activity.getApplicationContext())
+                        .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
+                        .s3Client(new AmazonS3Client(AWSMobileClient.getInstance()))
+                        .build();
+
+        File file = new File(activity.getApplicationContext().getFilesDir(), "sample.txt");
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            writer.append("Howdy World!");
+            writer.close();
+        }
+        catch(Exception e) {
+            Log.e(CLASS_NAME, e.getMessage());
+        }
+
+        TransferObserver uploadObserver =
+                transferUtility.upload(
+                        "public/sample.txt",
+                        new File(activity.getApplicationContext().getFilesDir(),"sample.txt"));
+
+        // Attach a listener to the observer to get state update and progress notifications
+        uploadObserver.setTransferListener(new TransferListener() {
+
+            @Override
+            public void onStateChanged(int id, TransferState state) {
+                if (TransferState.COMPLETED == state) {
+                    // Handle a completed upload.
+                }
+            }
+
+            @Override
+            public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+                float percentDonef = ((float) bytesCurrent / (float) bytesTotal) * 100;
+                int percentDone = (int)percentDonef;
+
+                Log.d(CLASS_NAME, "ID:" + id + " bytesCurrent: " + bytesCurrent
+                        + " bytesTotal: " + bytesTotal + " " + percentDone + "%");
+            }
+
+            @Override
+            public void onError(int id, Exception ex) {
+                // Handle errors
+            }
+
+        });
+
+        Log.d(CLASS_NAME, "Bytes Transferred: " + uploadObserver.getBytesTransferred());
+        Log.d(CLASS_NAME, "Bytes Total: " + uploadObserver.getBytesTotal());
+    }
 }
+
+

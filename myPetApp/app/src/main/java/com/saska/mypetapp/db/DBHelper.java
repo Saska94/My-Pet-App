@@ -4,10 +4,12 @@ import android.util.Log;
 
 import com.amazonaws.amplify.generated.graphql.CreateUserMutation;
 import com.amazonaws.amplify.generated.graphql.ListUsersQuery;
+import com.amazonaws.amplify.generated.graphql.UpdateUserMutation;
 import com.amazonaws.mobileconnectors.appsync.fetcher.AppSyncResponseFetchers;
 import com.apollographql.apollo.GraphQLCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
+import com.saska.mypetapp.helper.Toaster;
 
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -17,6 +19,7 @@ import javax.annotation.Nonnull;
 import type.CreateUserInput;
 import type.ModelStringInput;
 import type.ModelUserFilterInput;
+import type.UpdateUserInput;
 
 import static com.amazonaws.mobile.auth.core.internal.util.ThreadUtils.runOnUiThread;
 
@@ -106,6 +109,47 @@ public class DBHelper {
             }
         }
         return user;
+    }
+
+    public static void updateUser(final Toaster toaster, User user){
+        UpdateUserInput input = UpdateUserInput.builder()
+                .id(user.getIdUser())
+                .name(user.getName())
+                .surname(user.getSurname())
+                .phone(user.getPhone())
+                .profilePicture(user.getProfilePicture())
+                .build();
+
+        GraphQLCall.Callback<UpdateUserMutation.Data> mutateCallback = new GraphQLCall.Callback<UpdateUserMutation.Data>() {
+            @Override
+            public void onResponse(@Nonnull final Response<UpdateUserMutation.Data> response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(CLASS_NAME, "User updated!");
+                        toaster.make("Profile info updated!");
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(@Nonnull final ApolloException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(CLASS_NAME, "Failed to update user!");
+                        toaster.make("Something went wrong!");
+                        //countDownLatch.countDown();
+                    }
+                });
+            }
+        };
+
+        UpdateUserMutation updateUserMutation = UpdateUserMutation.builder()
+                .input(input)
+                .build();
+        ClientFactory.appSyncClient().mutate(updateUserMutation).enqueue(mutateCallback);
+
     }
 
     public static void createUser(boolean wait, String username, String name, String surname, String phone){

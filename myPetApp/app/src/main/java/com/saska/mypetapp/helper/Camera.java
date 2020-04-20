@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,10 +21,15 @@ public class Camera {
     public static final int PICK_IMAGE = 100;
     private final Activity activity;
     private Bitmap image;
+    private String picturePath;
 
     public Camera(Activity activity){
         className = getClass().getName();
         this.activity = activity;
+    }
+
+    public String getPicturePath() {
+        return picturePath;
     }
 
     public void openGallery() {
@@ -50,8 +56,17 @@ public class Camera {
         else if (uri != null){
             imageView.setImageURI(uri);
         }
-    }
 
+        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+        Cursor cursor = activity.getContentResolver().query(uri,
+                filePathColumn, null, null, null);
+        cursor.moveToFirst();
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        String picturePath = cursor.getString(columnIndex);
+        cursor.close();
+        this.picturePath = picturePath;
+
+    }
 
     public boolean hasCamera(){
         Log.i(className, "Checking if device has camera...");

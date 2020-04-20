@@ -7,6 +7,7 @@ subscription OnCreateUser {
     username
     phone
     type
+    profilePicture
   }
 }
 subscription OnUpdateUser {
@@ -17,6 +18,7 @@ subscription OnUpdateUser {
     username
     phone
     type
+    profilePicture
   }
 }
 subscription OnDeleteUser {
@@ -27,5 +29,6 @@ subscription OnDeleteUser {
     username
     phone
     type
+    profilePicture
   }
 }

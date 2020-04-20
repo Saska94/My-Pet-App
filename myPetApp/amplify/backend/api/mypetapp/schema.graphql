@@ -5,4 +5,5 @@ type User @model {
   username: String!
   phone: String!
   type: Int
+  profilePicture: String
 }

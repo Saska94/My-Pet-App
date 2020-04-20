@@ -163,7 +163,7 @@
                     android:gravity="center"
                     android:text="Update info"
                     android:textColor="@android:color/white"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
 
                 <Space
                     android:layout_width="match_parent"
