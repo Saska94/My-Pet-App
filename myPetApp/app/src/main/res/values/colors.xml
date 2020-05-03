@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="baseColor">#8f3f44</color>
+    <color name="lightBaseColor">#e0a6aa</color>
     <color name="buttonColor">#b04c52</color>
     <color name="buttonPressed">#ed727a</color>
     <color name="disabledButton">#8c7273</color>

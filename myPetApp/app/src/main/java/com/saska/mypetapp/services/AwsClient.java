@@ -32,6 +32,7 @@ import com.saska.mypetapp.db.User;
 import com.saska.mypetapp.helper.Helper;
 import com.saska.mypetapp.helper.LoginHelper;
 import com.saska.mypetapp.helper.Toaster;
+import com.saska.mypetapp.singletons.AppContext;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -76,14 +77,14 @@ public class AwsClient {
                                             Log.i(this.getClass().getName(), "No user found!");
                                             // First time login, update the database
                                             Intent registerIntent = new Intent(activity, RegisterActivity.class);
-                                            registerIntent.putExtra("USERNAME", username);
+                                            AppContext.getContext().setUsername(username);
                                             registerIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                             activity.getApplicationContext().startActivity(registerIntent);
                                         }
                                         else {
                                             // User already exists in the DB, proceed to registered page
                                             Intent userIntent = new Intent(activity, UserActivity.class);
-                                            userIntent.putExtra("USER", new User(user));
+                                            AppContext.getContext().setActiveUser(new User(user));
                                             userIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                             activity.getApplicationContext().startActivity(userIntent);
 

@@ -13,6 +13,7 @@ import com.amazonaws.mobile.client.AWSMobileClient;
 import com.saska.mypetapp.db.DBHelper;
 import com.saska.mypetapp.db.User;
 import com.saska.mypetapp.helper.Toaster;
+import com.saska.mypetapp.singletons.AppContext;
 
 
 public class RegisterActivity extends AppCompatActivity {
@@ -29,7 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
         CLASS_NAME = getClass().getName();
 
         toaster = new Toaster(this);
-        passedUsername = getIntent().getStringExtra("USERNAME");
+        passedUsername = AppContext.getContext().getUsername();
 
     }
 

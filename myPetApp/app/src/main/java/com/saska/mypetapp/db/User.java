@@ -1,23 +1,24 @@
 package com.saska.mypetapp.db;
 
 import com.amazonaws.amplify.generated.graphql.ListUsersQuery;
+import com.saska.mypetapp.helper.Helper;
 
 import java.io.Serializable;
 
 public class User implements Serializable {
 
-    private String idUser, name, surname, username, phone, profilePicture;
+    private String idUser, name, surname, username, phone, oldProfilePicture, newProfilePicture, localPicturePath;
     private int type;
 
     public User(){}
 
-    public User(String name, String surname, String username, String phone, int type, String profilePicture) {
+    public User(String name, String surname, String username, String phone, int type, String oldProfilePicture) {
         this.name = name;
         this.surname = surname;
         this.username = username;
         this.phone = phone;
         this.type = type;
-        this.profilePicture = profilePicture;
+        this.oldProfilePicture = oldProfilePicture;
     }
 
     public User(ListUsersQuery.Item user){
@@ -27,7 +28,8 @@ public class User implements Serializable {
         this.username = user.username();
         this.phone = user.phone();
         this.type = user.type();
-        this.profilePicture = user.profilePicture();
+        this.oldProfilePicture = user.profilePicture();
+        this.newProfilePicture = this.oldProfilePicture;
     }
 
     public String getIdUser() {
@@ -78,11 +80,42 @@ public class User implements Serializable {
         this.type = type;
     }
 
-    public String getProfilePicture() {
-        return profilePicture;
+    public String getOldProfilePicture() {
+        return oldProfilePicture;
     }
 
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
+    public void setOldProfilePicture(String oldProfilePicture) {
+        this.oldProfilePicture = oldProfilePicture;
     }
+
+    public String getNewProfilePicture() {
+        return newProfilePicture;
+    }
+
+    public void setNewProfilePicture(String newProfilePicture) {
+        this.newProfilePicture = newProfilePicture;
+    }
+
+    public String getLocalPicturePath() {
+        return localPicturePath;
+    }
+
+    public void setLocalPicturePath(String localPicturePath) {
+        this.localPicturePath = localPicturePath;
+    }
+
+    public boolean samePictures(){
+        boolean result;
+        if (oldProfilePicture == null && newProfilePicture == null) {
+            result = true;
+        }
+        else if (oldProfilePicture == null || newProfilePicture == null){
+            result = false;
+        }
+        else{
+            result = Helper.getPictureName(oldProfilePicture).equals(Helper.getPictureName(newProfilePicture));
+        }
+        return result;
+    }
+
 }

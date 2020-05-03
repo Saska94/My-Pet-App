@@ -5,9 +5,11 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,14 +20,16 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.saska.mypetapp.db.ClientFactory;
 import com.saska.mypetapp.db.User;
+import com.saska.mypetapp.singletons.AppContext;
 
 import java.io.File;
 
 public class UserActivity extends AppCompatActivity {
 
     private static String CLASS_NAME;
+    private static String WELCOME = "Welcome %s !";
 
-    private User activeUser;
+    private static User activeUser;
     private ProgressBar progressBar;
 
     public UserActivity(){
@@ -37,35 +41,92 @@ public class UserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
 
-        activeUser = (User) getIntent().getSerializableExtra("USER");
-        /**if (activeUser.getProfilePicture() != null){
-            downloadWithTransferUtility(activeUser.getProfilePicture());
-        }*/
+        activeUser = AppContext.getContext().getActiveUser();
+
+        loadProfileImage();
 
         TextView welcomeText = (TextView) findViewById(R.id.welcomeText);
-        String newText = welcomeText.getText().toString().concat(" ").concat(activeUser.getName()).concat("!");
-        welcomeText.setText(newText);
+        welcomeText.setText(String.format(WELCOME, activeUser.getName()));
 
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) findViewById(R.id.progressBarUser);
 
+    }
+
+    private void loadProfileImage(){
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.profileImageLayout);
+        layout.removeAllViews();
+        if (activeUser.getOldProfilePicture() != null){
+            final String localPath = Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOWNLOADS).getAbsolutePath().concat("/").concat(activeUser.getOldProfilePicture());
+            activeUser.setLocalPicturePath(localPath);
+            File file = new File(localPath);
+            // If we already downloaded image, load it from local, do not contact s3
+            if (file.exists()){
+                ImageView profileImage = new ImageView(getApplicationContext());
+                profileImage.setImageBitmap(BitmapFactory.decodeFile(localPath));
+                profileImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        goToEditProfile();
+                    }
+                });
+                layout.addView(profileImage);
+            }
+            else{
+                // Profile image not downloaded, get it from s3 bucket
+                ProgressBar loadingImage = new ProgressBar(this);
+                loadingImage.setForegroundGravity(Gravity.CENTER);
+                loadingImage.setVisibility(View.VISIBLE);
+                layout.addView(loadingImage);
+                downloadWithTransferUtility(layout, loadingImage, activeUser.getOldProfilePicture());
+            }
+
+        }
+        else{
+            // If user does not have profile image, load avatar
+            loadAvatarImage(layout);
+        }
+    }
+
+    private void loadAvatarImage(RelativeLayout layout){
+        ImageView profileImage = new ImageView(this);
+        profileImage.setImageDrawable(getDrawable(R.drawable.avatar));
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToEditProfile();
+            }
+        });
+        layout.addView(profileImage);
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        activeUser = AppContext.getContext().getActiveUser();
+        TextView welcomeText = (TextView) findViewById(R.id.welcomeText);
+        welcomeText.setText(String.format(WELCOME, activeUser.getName()));
+        loadProfileImage();
     }
 
     public void logOut(View view){/*
             progressBar.setVisibility(View.VISIBLE);
             Helper.blockTouch(getWindow());
             AwsClient.signOut(this, progressBar, getWindow());*/
+        AppContext.getContext().clearContext();
         AWSMobileClient.getInstance().signOut();
         startActivity(new Intent(this, MainActivity.class));
 
     }
 
-    public void goToEditProfile(View view){
+    public void goToEditProfile(){
         Intent i = new Intent(UserActivity.this, EditProfile.class);
         i.putExtra("USER", activeUser);
         startActivity(i);
     }
 
-    private void downloadWithTransferUtility(final String photo) {
+    private void downloadWithTransferUtility(final RelativeLayout layout, final ProgressBar progressBar, final String photo) {
+
         final String localPath = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + photo;
 
@@ -81,7 +142,16 @@ public class UserActivity extends AppCompatActivity {
             public void onStateChanged(int id, TransferState state) {
                 if (TransferState.COMPLETED == state) {
                     // Handle a completed upload.
-                    ((ImageView)findViewById(R.id.profileImage)).setImageBitmap(BitmapFactory.decodeFile(localPath));
+                    ImageView profileImage = new ImageView(getApplicationContext());
+                    profileImage.setImageBitmap(BitmapFactory.decodeFile(localPath));
+                    profileImage.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            goToEditProfile();
+                        }
+                    });
+                    layout.removeAllViews();
+                    layout.addView(profileImage);
                 }
             }
 
@@ -100,5 +170,6 @@ public class UserActivity extends AppCompatActivity {
             }
         });
     }
+
 
 }

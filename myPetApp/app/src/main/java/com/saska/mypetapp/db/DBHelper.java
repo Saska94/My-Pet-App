@@ -1,6 +1,9 @@
 package com.saska.mypetapp.db;
 
 import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.widget.ProgressBar;
 
 import com.amazonaws.amplify.generated.graphql.CreateUserMutation;
 import com.amazonaws.amplify.generated.graphql.ListUsersQuery;
@@ -9,6 +12,7 @@ import com.amazonaws.mobileconnectors.appsync.fetcher.AppSyncResponseFetchers;
 import com.apollographql.apollo.GraphQLCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
+import com.saska.mypetapp.helper.Helper;
 import com.saska.mypetapp.helper.Toaster;
 
 import java.util.ArrayList;
@@ -111,13 +115,13 @@ public class DBHelper {
         return user;
     }
 
-    public static void updateUser(final Toaster toaster, User user){
+    public static void updateUser(final ProgressBar progressBar, final Window window, final Toaster toaster, User user){
         UpdateUserInput input = UpdateUserInput.builder()
                 .id(user.getIdUser())
                 .name(user.getName())
                 .surname(user.getSurname())
                 .phone(user.getPhone())
-                .profilePicture(user.getProfilePicture())
+                .profilePicture(user.getNewProfilePicture())
                 .build();
 
         GraphQLCall.Callback<UpdateUserMutation.Data> mutateCallback = new GraphQLCall.Callback<UpdateUserMutation.Data>() {
@@ -128,6 +132,8 @@ public class DBHelper {
                     public void run() {
                         Log.i(CLASS_NAME, "User updated!");
                         toaster.make("Profile info updated!");
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(window);
                     }
                 });
             }
@@ -139,6 +145,8 @@ public class DBHelper {
                     public void run() {
                         Log.i(CLASS_NAME, "Failed to update user!");
                         toaster.make("Something went wrong!");
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(window);
                         //countDownLatch.countDown();
                     }
                 });
@@ -162,6 +170,7 @@ public class DBHelper {
                 .surname(surname)
                 .phone(phone)
                 .type(1)
+                .profilePicture("public/avatar.png")
                 .build();
 
         // Mutation callback code

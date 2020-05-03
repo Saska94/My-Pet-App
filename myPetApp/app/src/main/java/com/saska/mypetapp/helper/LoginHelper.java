@@ -10,6 +10,7 @@ import com.saska.mypetapp.RegisterActivity;
 import com.saska.mypetapp.UserActivity;
 import com.saska.mypetapp.db.DBHelper;
 import com.saska.mypetapp.db.User;
+import com.saska.mypetapp.singletons.AppContext;
 
 public class LoginHelper {
 
@@ -28,14 +29,14 @@ public class LoginHelper {
             Log.i(this.getClass().getName(), "No user found!");
             // First time login, update the database
             Intent registerIntent = new Intent(activity, RegisterActivity.class);
-            registerIntent.putExtra("USERNAME", username);
+            AppContext.getContext().setUsername(username);
             registerIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             activity.getApplicationContext().startActivity(registerIntent);
         }
         else {
             // User already exists in the DB, proceed to registered page
             Intent userIntent = new Intent(activity, UserActivity.class);
-            userIntent.putExtra("USER", new User(user));
+            AppContext.getContext().setActiveUser(new User(user));
             userIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             activity.getApplicationContext().startActivity(userIntent);
         }

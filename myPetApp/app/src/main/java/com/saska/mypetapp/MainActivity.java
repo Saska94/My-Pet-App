@@ -8,21 +8,21 @@ import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.amazonaws.amplify.generated.graphql.ListUsersQuery;
 import com.saska.mypetapp.db.ClientFactory;
 import com.saska.mypetapp.helper.Helper;
 import com.saska.mypetapp.helper.Toaster;
 import com.saska.mypetapp.services.AwsClient;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private AwsClient awsClient;
     private Toaster toaster;
     private ProgressBar progressBar;
+    private static String CLASS_NAME;
 
-    private ArrayList<ListUsersQuery.Item> mUsers;
+    public MainActivity(){
+        CLASS_NAME = getClass().getName();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +32,12 @@ public class MainActivity extends AppCompatActivity {
         awsClient = new AwsClient(this);
         awsClient.initialize();
         toaster = new Toaster(this);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) findViewById(R.id.progressBarMain);
 
         ClientFactory.init(this);
+
+        Helper.requestReadPermission(this, CLASS_NAME);
+        Helper.requestWritePermission(this,CLASS_NAME);
 
     }
 
