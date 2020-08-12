@@ -1,6 +1,9 @@
 package com.saska.mypetapp.singletons;
 
+import com.saska.mypetapp.db.Pet;
 import com.saska.mypetapp.db.User;
+
+import java.util.List;
 
 public class AppContext {
 
@@ -8,6 +11,8 @@ public class AppContext {
 
     private User activeUser;
     private String username;
+    private List<Pet> allPets;
+
 
     private AppContext(){}
 
@@ -38,4 +43,7 @@ public class AppContext {
         this.username = username;
     }
 
+    public List<Pet> getAllPets() {
+        return allPets;
+    }
 }

@@ -41,3 +41,45 @@ mutation DeleteUser(
     profilePicture
   }
 }
+mutation CreatePet(
+  $input: CreatePetInput!
+  $condition: ModelPetConditionInput
+) {
+  createPet(input: $input, condition: $condition) {
+    id
+    name
+    description
+    location
+    type
+    picture
+    addoption
+  }
+}
+mutation UpdatePet(
+  $input: UpdatePetInput!
+  $condition: ModelPetConditionInput
+) {
+  updatePet(input: $input, condition: $condition) {
+    id
+    name
+    description
+    location
+    type
+    picture
+    addoption
+  }
+}
+mutation DeletePet(
+  $input: DeletePetInput!
+  $condition: ModelPetConditionInput
+) {
+  deletePet(input: $input, condition: $condition) {
+    id
+    name
+    description
+    location
+    type
+    picture
+    addoption
+  }
+}

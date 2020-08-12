@@ -7,3 +7,13 @@ type User @model {
   type: Int
   profilePicture: String
 }
+
+type Pet @model {
+  id: ID!
+  name: String!
+  description: String
+  location : String
+  type: String!
+  picture: String
+  addoption: Int!
+}

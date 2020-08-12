@@ -32,3 +32,36 @@ subscription OnDeleteUser {
     profilePicture
   }
 }
+subscription OnCreatePet {
+  onCreatePet {
+    id
+    name
+    description
+    location
+    type
+    picture
+    addoption
+  }
+}
+subscription OnUpdatePet {
+  onUpdatePet {
+    id
+    name
+    description
+    location
+    type
+    picture
+    addoption
+  }
+}
+subscription OnDeletePet {
+  onDeletePet {
+    id
+    name
+    description
+    location
+    type
+    picture
+    addoption
+  }
+}

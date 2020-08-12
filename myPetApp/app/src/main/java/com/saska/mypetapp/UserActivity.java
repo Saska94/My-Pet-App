@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -50,6 +51,15 @@ public class UserActivity extends AppCompatActivity {
 
         progressBar = (ProgressBar) findViewById(R.id.progressBarUser);
 
+        Button ourPets = (Button) findViewById(R.id.ourPetsBtn);
+        ourPets.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(UserActivity.this, Pets.class);
+                startActivity(i);
+            }
+        });
+
     }
 
     private void loadProfileImage(){
@@ -78,7 +88,7 @@ public class UserActivity extends AppCompatActivity {
                 loadingImage.setForegroundGravity(Gravity.CENTER);
                 loadingImage.setVisibility(View.VISIBLE);
                 layout.addView(loadingImage);
-                downloadWithTransferUtility(layout, loadingImage, activeUser.getOldProfilePicture());
+                downloadWithTransferUtility(layout, activeUser.getOldProfilePicture());
             }
 
         }
@@ -121,11 +131,10 @@ public class UserActivity extends AppCompatActivity {
 
     public void goToEditProfile(){
         Intent i = new Intent(UserActivity.this, EditProfile.class);
-        i.putExtra("USER", activeUser);
         startActivity(i);
     }
 
-    private void downloadWithTransferUtility(final RelativeLayout layout, final ProgressBar progressBar, final String photo) {
+    private void downloadWithTransferUtility(final RelativeLayout layout, final String photo) {
 
         final String localPath = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + photo;

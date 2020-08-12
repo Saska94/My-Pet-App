@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EditProfile"></activity>
+        <activity android:name=".Pets"></activity>
+        <activity android:name=".EditProfile" />
         <activity
             android:name=".RegisterActivity"
             android:windowSoftInputMode="adjustPan" />
@@ -26,7 +27,9 @@
             android:windowSoftInputMode="adjustPan" />
 
         <service android:name="org.eclipse.paho.android.service.MqttService" />
-        <service android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService" android:enabled="true" />
+        <service
+            android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
+            android:enabled="true" />
 
         <activity
             android:name=".MainActivity"
