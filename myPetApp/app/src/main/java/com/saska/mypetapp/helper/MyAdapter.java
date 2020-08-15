@@ -1,17 +1,22 @@
 package com.saska.mypetapp.helper;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.saska.mypetapp.R;
+import com.saska.mypetapp.db.DBHelper;
 import com.saska.mypetapp.db.Pet;
 
 import java.util.ArrayList;
@@ -22,6 +27,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private List<Pet> mData = new ArrayList<>();;
     private LayoutInflater mInflater;
     private Context context;
+    private ProgressBar progressBarPets;
 
 
     // data is passed into the constructor
@@ -49,9 +55,24 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         return mData.size();
     }
 
+    @Override
+    public long getItemId(int position){
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
     // resets the list with a new set of data
     public void setItems(List<Pet> items) {
+        Log.i("RW", "RW - " + " RESETTING THE LIST OF DATA");
         mData = items;
+    }
+
+    public void setProgressBarPets(ProgressBar progressBarPets){
+        this.progressBarPets = progressBarPets;
     }
 
     // stores and recycles views as they are scrolled off screen
@@ -63,18 +84,29 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             super(itemView);
             txt_name = itemView.findViewById(R.id.petName);
             petImageLayout = itemView.findViewById(R.id.petImageLayout);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    progressBarPets.setVisibility(View.VISIBLE);
+                    Helper.blockTouch(((Activity)context).getWindow());
+                    System.out.println("Selected " + txt_name.getText().toString() );
+                    DBHelper.loadPetDetails(progressBarPets, context, txt_name.getText().toString());
+                }
+            });
         }
 
         void bindData(Pet item) {
+            Log.i("RW", "RW - " + " binding data for pet - " + item.getName());
             txt_name.setText(item.getName());
-            loadImage(petImageLayout, item.getImageBitmap());
+            //loadImage(petImageLayout, item.getImageBitmap());
         }
     }
 
     void loadImage(RelativeLayout layout, Bitmap imageBitmap){
             ImageView petImage = new ImageView(context);
-            petImage.setImageBitmap(imageBitmap);
-            //petImage.setImageDrawable(context.getDrawable(R.drawable.avatar));
+           // Bitmap createdBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.avatar);
+            //petImage.setImageBitmap(createdBitmap);
+            petImage.setImageDrawable(new BitmapDrawable(context.getResources(), imageBitmap));
             layout.addView(petImage);
     }
 

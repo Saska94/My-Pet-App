@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 public class Pet implements Serializable {
 
-    private int id, addoption;
+    private int id, adoption;
     private String name, description, location, type, picture;
     private Bitmap imageBitmap;
 
@@ -28,7 +28,7 @@ public class Pet implements Serializable {
         this.location = pet.location();
         this.type = pet.type();
         this.picture = pet.picture();
-        this.addoption = pet.addoption();
+        this.adoption = pet.addoption();
     }
 
     public int getId() {
@@ -79,12 +79,12 @@ public class Pet implements Serializable {
         this.picture = picture;
     }
 
-    public int getAddoption() {
-        return addoption;
+    public int getAdoption() {
+        return adoption;
     }
 
-    public void setAddoption(int addoption) {
-        this.addoption = addoption;
+    public void setAdoption(int addoption) {
+        this.adoption = addoption;
     }
 
     public Bitmap getImageBitmap() {

@@ -1,26 +1,36 @@
 package com.saska.mypetapp.db;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.ProgressBar;
 
+import com.amazonaws.amplify.generated.graphql.CreatePetMutation;
 import com.amazonaws.amplify.generated.graphql.CreateUserMutation;
+import com.amazonaws.amplify.generated.graphql.ListPetsQuery;
 import com.amazonaws.amplify.generated.graphql.ListUsersQuery;
 import com.amazonaws.amplify.generated.graphql.UpdateUserMutation;
 import com.amazonaws.mobileconnectors.appsync.fetcher.AppSyncResponseFetchers;
 import com.apollographql.apollo.GraphQLCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
+import com.saska.mypetapp.PetDetailsActivity;
 import com.saska.mypetapp.helper.Helper;
+import com.saska.mypetapp.helper.LoginHelper;
 import com.saska.mypetapp.helper.Toaster;
+import com.saska.mypetapp.singletons.AppContext;
 
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
 import javax.annotation.Nonnull;
 
+import type.CreatePetInput;
 import type.CreateUserInput;
+import type.ModelPetFilterInput;
 import type.ModelStringInput;
 import type.ModelUserFilterInput;
 import type.UpdateUserInput;
@@ -33,6 +43,7 @@ public class DBHelper {
 
     private static ArrayList<ListUsersQuery.Item> mUsers;
     private static ListUsersQuery.Item user;
+    private static ListPetsQuery.Item pet;
 
     public static final ArrayList<ListUsersQuery.Item> listAllUsers(boolean wait){
 
@@ -147,7 +158,6 @@ public class DBHelper {
                         toaster.make("Something went wrong!");
                         progressBar.setVisibility(View.INVISIBLE);
                         Helper.unblockTouch(window);
-                        //countDownLatch.countDown();
                     }
                 });
             }
@@ -160,9 +170,8 @@ public class DBHelper {
 
     }
 
-    public static void createUser(boolean wait, String username, String name, String surname, String phone){
-
-        final CountDownLatch countDownLatch = new CountDownLatch(1);
+    public static void createUser(final Activity activity, final ProgressBar progressBarRegister,
+                                  final Window window, final String username, String name, String surname, String phone){
 
         CreateUserInput input = CreateUserInput.builder()
                 .username(username)
@@ -177,8 +186,15 @@ public class DBHelper {
         GraphQLCall.Callback<CreateUserMutation.Data> mutateCallback = new GraphQLCall.Callback<CreateUserMutation.Data>() {
             @Override
             public void onResponse(@Nonnull final Response<CreateUserMutation.Data> response) {
-                       Log.i(CLASS_NAME, "User added!");
-                        countDownLatch.countDown();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(CLASS_NAME, "User added!");
+                        progressBarRegister.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(window);
+                        LoginHelper.proceedToProfile(activity, username);
+                    }
+                });
             }
 
             @Override
@@ -187,7 +203,8 @@ public class DBHelper {
                     @Override
                     public void run() {
                         Log.i(CLASS_NAME, "Failed to add user!");
-                        countDownLatch.countDown();
+                        progressBarRegister.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(window);
                     }
                 });
             }
@@ -198,14 +215,104 @@ public class DBHelper {
                 .build();
         ClientFactory.appSyncClient().mutate(addUserMutation).enqueue(mutateCallback);
 
-        if (wait){
-            try {
-                countDownLatch.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+    }
+
+
+    // PETS
+
+    public static void addPet(final Toaster toaster, final ProgressBar progressBarAddPet, final Window window, String name, String description,
+                              String location, String type, int adoption, String picture){
+
+        CreatePetInput input = CreatePetInput.builder()
+                .name(name)
+                .description(description)
+                .location(location)
+                .type(type)
+                .addoption(adoption)
+                .picture(picture)
+                .build();
+
+        // Mutation callback code
+        GraphQLCall.Callback<CreatePetMutation.Data> mutateCallback = new GraphQLCall.Callback<CreatePetMutation.Data>() {
+            @Override
+            public void onResponse(@Nonnull final Response<CreatePetMutation.Data> response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(CLASS_NAME, "Pet added!");
+                        progressBarAddPet.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(window);
+                        toaster.make("Pet added! :)");
+                    }
+                });
             }
-        }
+
+            @Override
+            public void onFailure(@Nonnull final ApolloException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(CLASS_NAME, "Failed to add pet!");
+                        progressBarAddPet.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(window);
+                        toaster.make("Failed to add pet!");
+                    }
+                });
+            }
+        };
+
+        CreatePetMutation addPetMutation = CreatePetMutation.builder()
+                .input(input)
+                .build();
+        ClientFactory.appSyncClient().mutate(addPetMutation).enqueue(mutateCallback);
 
     }
+
+    public static void loadPetDetails(final ProgressBar progressBar, final Context context, String name){
+
+
+        Log.i("ABC", "starting load pet details");
+        GraphQLCall.Callback<ListPetsQuery.Data> queryCallback = new GraphQLCall.Callback<ListPetsQuery.Data>() {
+            @Override
+            public void onResponse(@Nonnull final Response<ListPetsQuery.Data> response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i("ABC", "Success");
+                        pet = new ArrayList<>(response.data().listPets().items()).get(0);
+                        Pet dbPet = new Pet(pet);
+                        Log.i("ABC", "ITEM IS : " + dbPet.getName());
+                        AppContext.getContext().setSelectedPet(dbPet);
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(((Activity)context).getWindow());
+
+                        Log.i("ABC", "STARTING ACTIVITY");
+                        Intent details = new Intent((Activity)context, PetDetailsActivity.class);
+                        ((Activity)context).startActivity(details);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(@Nonnull final ApolloException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(CLASS_NAME, "Failure");
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(((Activity)context).getWindow());
+                    }
+                });
+            }
+        };
+
+        ModelStringInput modelStringInput = ModelStringInput.builder().eq(name).build();
+        ModelPetFilterInput modelPetFilterInput = ModelPetFilterInput.builder().name(modelStringInput).build();
+        ClientFactory.appSyncClient().query(ListPetsQuery.builder().filter(modelPetFilterInput).build())
+                .enqueue(queryCallback);
+
+    }
+
+
 
 }

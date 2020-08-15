@@ -2,16 +2,15 @@ package com.saska.mypetapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.amazonaws.amplify.generated.graphql.ListUsersQuery;
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.saska.mypetapp.db.DBHelper;
-import com.saska.mypetapp.db.User;
+import com.saska.mypetapp.helper.Helper;
 import com.saska.mypetapp.helper.Toaster;
 import com.saska.mypetapp.singletons.AppContext;
 
@@ -20,6 +19,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private Toaster toaster;
     private String passedUsername;
+    private ProgressBar progressBarRegister;
 
     private static String CLASS_NAME;
 
@@ -31,6 +31,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         toaster = new Toaster(this);
         passedUsername = AppContext.getContext().getUsername();
+        progressBarRegister = (ProgressBar) findViewById(R.id.progressBarRegister);
 
     }
 
@@ -51,31 +52,13 @@ public class RegisterActivity extends AppCompatActivity {
             toaster.make("Please fill in all fields.");
         }
         else{
-            DBHelper.createUser(true, passedUsername, name, surname, number);
-            User user = waitForDatabaseUser();
-            Intent userIntent = new Intent(this, UserActivity.class);
-            userIntent.putExtra("USER", user);
-            startActivity(userIntent);
+            progressBarRegister.setVisibility(View.VISIBLE);
+            Helper.blockTouch(getWindow());
+            DBHelper.createUser(this, progressBarRegister, getWindow(), passedUsername, name, surname, number);
         }
 
 
     }
 
-    private User waitForDatabaseUser(){
-        while (true){
-            ListUsersQuery.Item item =  DBHelper.getUserByUsername(true, passedUsername);
-            if (item == null){
-                try {
-                    Log.i(CLASS_NAME, "Didn't get the user from the database. Going to sleep.");
-                    Thread.sleep(3_000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            else {
-                return new User(item);
-            }
-        }
-    }
 
 }

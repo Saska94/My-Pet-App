@@ -10,4 +10,5 @@
     <color name="disabledButton">#8c7273</color>
     <color name="toastBackground">#f0dbd5</color>
     <color name="themeBlue">#1c574f</color>
+    <color name="blurBackground">#a6fefffa</color>
 </resources>

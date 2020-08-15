@@ -1,7 +1,6 @@
 package com.saska.mypetapp;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -55,9 +54,6 @@ public class Pets extends AppCompatActivity {
 
         // use a linear layout manager
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setItemViewCacheSize(20);
-        mRecyclerView.setDrawingCacheEnabled(true);
-        mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
         // specify an adapter (see also next example)
         mAdapter = new MyAdapter(this);
@@ -66,15 +62,19 @@ public class Pets extends AppCompatActivity {
 
         petProgressBar = (ProgressBar) findViewById(R.id.petsProgressBar);
         petProgressBar.setVisibility(View.VISIBLE);
+        mAdapter.setProgressBarPets(petProgressBar);
         msgText = (TextView) findViewById(R.id.msgText);
         msgText.setVisibility(View.INVISIBLE);
 
     }
 
+
+
     @Override
     public void onResume() {
         super.onResume();
         msgText.setVisibility(View.INVISIBLE);
+        Log.i(CLASS_NAME, "pozvan on resume");
 
         // Query list data when we return to the screen
         query();
@@ -99,7 +99,8 @@ public class Pets extends AppCompatActivity {
                 public void run() {
                     petList = new ArrayList<>();
                     for (ListPetsQuery.Item pet: mPets) {
-                        Pet dbPet = new Pet(pet);
+                        Pet dbPet = new Pet(pet);/*
+                        Log.i("AAA", "ITEM : " + dbPet.getName());
                         final String localPath = Environment.getExternalStoragePublicDirectory(
                                 Environment.DIRECTORY_DOWNLOADS).getAbsolutePath().concat("/").concat(pet.picture());
                         File file = new File(localPath);
@@ -108,7 +109,7 @@ public class Pets extends AppCompatActivity {
                         }
                         BitmapFactory.Options options = new BitmapFactory.Options();
                         options.inPreferredConfig = Bitmap.Config.RGB_565;
-                        dbPet.setImageBitmap(BitmapFactory.decodeFile(localPath, options));
+                        dbPet.setImageBitmap(BitmapFactory.decodeFile(localPath, options));*/
                         petList.add(dbPet);
                     }
                     petProgressBar.setVisibility(View.INVISIBLE);
@@ -157,5 +158,11 @@ public class Pets extends AppCompatActivity {
             }
         });
     }
+
+    public void goToAddNewPet(View view){
+        Intent newUser = new Intent(Pets.this, AddPetActivity.class);
+        startActivity(newUser);
+    }
+
 
 }

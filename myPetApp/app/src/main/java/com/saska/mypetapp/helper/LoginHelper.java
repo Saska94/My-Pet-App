@@ -49,4 +49,19 @@ public class LoginHelper {
         activity.getApplicationContext().startActivity(intent);
     }
 
+    public static void proceedToProfile(Activity activity, String username){
+        Intent userIntent = new Intent(activity, UserActivity.class);
+        userIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        while(DBHelper.getUserByUsername(true, username) == null){
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        User user = new User((DBHelper.getUserByUsername(true, username)));
+        AppContext.getContext().setActiveUser(user);
+        activity.getApplicationContext().startActivity(userIntent);
+    }
+
 }

@@ -10,32 +10,46 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp">
 
         <ProgressBar
             android:id="@+id/petsProgressBar"
             style="?android:attr/progressBarStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.1"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:visibility="invisible" />
 
         <TextView
             android:id="@+id/textView3"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.1"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:fontFamily="casual"
             android:gravity="center"
             android:text="All our pets"
             android:textColor="@color/baseColor"
             android:textSize="24sp" />
 
+        <Switch
+            android:id="@+id/lostAddoptionSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fontFamily="casual"
+            android:text="lost / for addoption"
+            android:textColor="@color/baseColor"
+            android:textSize="18sp"
+            android:thumbTint="@color/baseColor"
+            android:trackTint="@color/baseColor" />
+
         <TextView
             android:id="@+id/msgText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.1"
+            android:layout_height="0dp"
+            android:layout_weight="0.7"
             android:fontFamily="casual"
             android:gravity="center"
             android:text="Sorry, no pets in the database.."
@@ -46,20 +60,21 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="221dp"
-            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:layout_weight="5"
             android:scrollbars="vertical" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.2"
+            android:layout_height="0dp"
+            android:layout_weight="2"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/filter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_margin="10dp"
                 android:layout_marginBottom="0dp"
                 android:layout_weight="1"
@@ -76,12 +91,14 @@
                 android:id="@+id/addPet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_margin="10dp"
                 android:layout_marginBottom="0dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_style"
                 android:fontFamily="casual"
                 android:gravity="center"
+                android:onClick="goToAddNewPet"
                 android:padding="10dp"
                 android:text="Add Pet"
                 android:textColor="@android:color/white"

@@ -12,6 +12,7 @@ public class AppContext {
     private User activeUser;
     private String username;
     private List<Pet> allPets;
+    private Pet selectedPet;
 
 
     private AppContext(){}
@@ -45,5 +46,13 @@ public class AppContext {
 
     public List<Pet> getAllPets() {
         return allPets;
+    }
+
+    public void setSelectedPet(Pet pet){
+        this.selectedPet = pet;
+    }
+
+    public Pet getSelectedPet(){
+        return selectedPet;
     }
 }
