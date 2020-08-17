@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import com.amazonaws.amplify.generated.graphql.CreateFFactMutation;
 import com.amazonaws.amplify.generated.graphql.CreatePetMutation;
 import com.amazonaws.amplify.generated.graphql.CreateUserMutation;
 import com.amazonaws.amplify.generated.graphql.ListPetsQuery;
@@ -28,6 +30,7 @@ import java.util.concurrent.CountDownLatch;
 
 import javax.annotation.Nonnull;
 
+import type.CreateFFactInput;
 import type.CreatePetInput;
 import type.CreateUserInput;
 import type.ModelPetFilterInput;
@@ -310,6 +313,53 @@ public class DBHelper {
         ModelPetFilterInput modelPetFilterInput = ModelPetFilterInput.builder().name(modelStringInput).build();
         ClientFactory.appSyncClient().query(ListPetsQuery.builder().filter(modelPetFilterInput).build())
                 .enqueue(queryCallback);
+
+    }
+
+
+
+    // Fun Facts
+
+    public static void addFunFact(final Toaster toaster, final ProgressBar progressBarFF, final Window window, final EditText text){
+
+        CreateFFactInput input = CreateFFactInput.builder()
+                .text(text.getText().toString())
+                .build();
+
+        // Mutation callback code
+        GraphQLCall.Callback<CreateFFactMutation.Data> mutateCallback = new GraphQLCall.Callback<CreateFFactMutation.Data>() {
+            @Override
+            public void onResponse(@Nonnull final Response<CreateFFactMutation.Data> response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(CLASS_NAME, "Fun Fact added!");
+                        progressBarFF.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(window);
+                        text.getText().clear();
+                        toaster.make("Fun Fact added! :)");
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(@Nonnull final ApolloException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(CLASS_NAME, "Failed to add pet!");
+                        progressBarFF.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(window);
+                        toaster.make("Failed to add pet!");
+                    }
+                });
+            }
+        };
+
+        CreateFFactMutation addFFmutation = CreateFFactMutation.builder()
+                .input(input)
+                .build();
+        ClientFactory.appSyncClient().mutate(addFFmutation).enqueue(mutateCallback);
 
     }
 

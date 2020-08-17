@@ -12,6 +12,7 @@ public class AppContext {
     private User activeUser;
     private String username;
     private List<Pet> allPets;
+    private List<Pet> filteredPets;
     private Pet selectedPet;
 
 
@@ -48,11 +49,23 @@ public class AppContext {
         return allPets;
     }
 
+    public void setAllPets(List<Pet> pets){
+        this.allPets = pets;
+    }
+
     public void setSelectedPet(Pet pet){
         this.selectedPet = pet;
     }
 
     public Pet getSelectedPet(){
         return selectedPet;
+    }
+
+    public List<Pet> getFilteredPets() {
+        return filteredPets;
+    }
+
+    public void setFilteredPets(List<Pet> filteredPets) {
+        this.filteredPets = filteredPets;
     }
 }

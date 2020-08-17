@@ -141,6 +141,11 @@ public class UserActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    public void goToFunFacts(View view){
+        Intent i = new Intent(UserActivity.this, FunFactsActivity.class);
+        startActivity(i);
+    }
+
     private void downloadWithTransferUtility(final RelativeLayout layout, final String photo) {
 
         final String localPath = Environment.getExternalStoragePublicDirectory(

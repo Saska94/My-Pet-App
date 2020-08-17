@@ -17,3 +17,8 @@ type Pet @model {
   picture: String
   addoption: Int!
 }
+
+type FFact @model {
+  id: ID!
+  text: String!
+}

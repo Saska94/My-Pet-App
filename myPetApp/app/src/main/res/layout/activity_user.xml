@@ -106,6 +106,7 @@
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/white_button_style"
+                    android:onClick="goToFunFacts"
                     android:text="Fun facts" />
             </LinearLayout>
 

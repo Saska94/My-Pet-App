@@ -83,3 +83,30 @@ mutation DeletePet(
     addoption
   }
 }
+mutation CreateFFact(
+  $input: CreateFFactInput!
+  $condition: ModelFFactConditionInput
+) {
+  createFFact(input: $input, condition: $condition) {
+    id
+    text
+  }
+}
+mutation UpdateFFact(
+  $input: UpdateFFactInput!
+  $condition: ModelFFactConditionInput
+) {
+  updateFFact(input: $input, condition: $condition) {
+    id
+    text
+  }
+}
+mutation DeleteFFact(
+  $input: DeleteFFactInput!
+  $condition: ModelFFactConditionInput
+) {
+  deleteFFact(input: $input, condition: $condition) {
+    id
+    text
+  }
+}

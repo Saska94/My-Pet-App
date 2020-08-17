@@ -53,3 +53,22 @@ query ListPets($filter: ModelPetFilterInput, $limit: Int, $nextToken: String) {
     nextToken
   }
 }
+query GetFFact($id: ID!) {
+  getFFact(id: $id) {
+    id
+    text
+  }
+}
+query ListFFacts(
+  $filter: ModelFFactFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listFFacts(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      text
+    }
+    nextToken
+  }
+}

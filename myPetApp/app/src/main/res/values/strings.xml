@@ -3,4 +3,15 @@
     <string name="action_settings">Settings</string>
 
     <string name="avatar">public/avatar.png</string>
+    <string name="aboutUs">
+        \n
+        Our organization is new, and we are giving our best to help our little friends in need.\n
+        Do you know someone who lost their pet?\n
+        Or someone who is looking for a new friend?\n
+        If so, we can help! :)
+        \n
+        For more information you can write to us on : example@.com or call us!
+
+    </string>
+    <string name="emptyFFMsg">No fun facts added</string>
 </resources>
