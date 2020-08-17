@@ -146,6 +146,10 @@ public class UserActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    public void goToPosts(View view){
+        Intent i = new Intent(UserActivity.this, PostsActivity.class);
+        startActivity(i);
+    }
     private void downloadWithTransferUtility(final RelativeLayout layout, final String photo) {
 
         final String localPath = Environment.getExternalStoragePublicDirectory(

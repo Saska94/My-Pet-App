@@ -8,6 +8,19 @@ subscription OnCreateUser {
     phone
     type
     profilePicture
+    posts {
+      items {
+        id
+        heading
+        text
+        picture
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+    createdAt
+    updatedAt
   }
 }
 subscription OnUpdateUser {
@@ -19,6 +32,19 @@ subscription OnUpdateUser {
     phone
     type
     profilePicture
+    posts {
+      items {
+        id
+        heading
+        text
+        picture
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+    createdAt
+    updatedAt
   }
 }
 subscription OnDeleteUser {
@@ -30,6 +56,19 @@ subscription OnDeleteUser {
     phone
     type
     profilePicture
+    posts {
+      items {
+        id
+        heading
+        text
+        picture
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+    createdAt
+    updatedAt
   }
 }
 subscription OnCreatePet {
@@ -41,6 +80,8 @@ subscription OnCreatePet {
     type
     picture
     addoption
+    createdAt
+    updatedAt
   }
 }
 subscription OnUpdatePet {
@@ -52,6 +93,8 @@ subscription OnUpdatePet {
     type
     picture
     addoption
+    createdAt
+    updatedAt
   }
 }
 subscription OnDeletePet {
@@ -63,23 +106,103 @@ subscription OnDeletePet {
     type
     picture
     addoption
+    createdAt
+    updatedAt
   }
 }
 subscription OnCreateFFact {
   onCreateFFact {
     id
     text
+    createdAt
+    updatedAt
   }
 }
 subscription OnUpdateFFact {
   onUpdateFFact {
     id
     text
+    createdAt
+    updatedAt
   }
 }
 subscription OnDeleteFFact {
   onDeleteFFact {
     id
     text
+    createdAt
+    updatedAt
+  }
+}
+subscription OnCreatePost {
+  onCreatePost {
+    id
+    heading
+    text
+    picture
+    createdAt
+    user {
+      id
+      name
+      surname
+      username
+      phone
+      type
+      profilePicture
+      posts {
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+    updatedAt
+  }
+}
+subscription OnUpdatePost {
+  onUpdatePost {
+    id
+    heading
+    text
+    picture
+    createdAt
+    user {
+      id
+      name
+      surname
+      username
+      phone
+      type
+      profilePicture
+      posts {
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+    updatedAt
+  }
+}
+subscription OnDeletePost {
+  onDeletePost {
+    id
+    heading
+    text
+    picture
+    createdAt
+    user {
+      id
+      name
+      surname
+      username
+      phone
+      type
+      profilePicture
+      posts {
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+    updatedAt
   }
 }

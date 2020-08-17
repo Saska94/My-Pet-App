@@ -8,6 +8,19 @@ query GetUser($id: ID!) {
     phone
     type
     profilePicture
+    posts {
+      items {
+        id
+        heading
+        text
+        picture
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+    createdAt
+    updatedAt
   }
 }
 query ListUsers(
@@ -24,6 +37,11 @@ query ListUsers(
       phone
       type
       profilePicture
+      posts {
+        nextToken
+      }
+      createdAt
+      updatedAt
     }
     nextToken
   }
@@ -37,6 +55,8 @@ query GetPet($id: ID!) {
     type
     picture
     addoption
+    createdAt
+    updatedAt
   }
 }
 query ListPets($filter: ModelPetFilterInput, $limit: Int, $nextToken: String) {
@@ -49,6 +69,8 @@ query ListPets($filter: ModelPetFilterInput, $limit: Int, $nextToken: String) {
       type
       picture
       addoption
+      createdAt
+      updatedAt
     }
     nextToken
   }
@@ -57,6 +79,8 @@ query GetFFact($id: ID!) {
   getFFact(id: $id) {
     id
     text
+    createdAt
+    updatedAt
   }
 }
 query ListFFacts(
@@ -68,6 +92,60 @@ query ListFFacts(
     items {
       id
       text
+      createdAt
+      updatedAt
+    }
+    nextToken
+  }
+}
+query GetPost($id: ID!) {
+  getPost(id: $id) {
+    id
+    heading
+    text
+    picture
+    createdAt
+    user {
+      id
+      name
+      surname
+      username
+      phone
+      type
+      profilePicture
+      posts {
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+    updatedAt
+  }
+}
+query ListPosts(
+  $filter: ModelPostFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listPosts(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      heading
+      text
+      picture
+      createdAt
+      user {
+        id
+        name
+        surname
+        username
+        phone
+        type
+        profilePicture
+        createdAt
+        updatedAt
+      }
+      updatedAt
     }
     nextToken
   }

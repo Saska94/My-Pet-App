@@ -1,5 +1,6 @@
 package com.saska.mypetapp.db;
 
+import com.amazonaws.amplify.generated.graphql.ListPostsQuery;
 import com.amazonaws.amplify.generated.graphql.ListUsersQuery;
 import com.saska.mypetapp.helper.Helper;
 
@@ -30,6 +31,15 @@ public class User implements Serializable {
         this.type = user.type();
         this.oldProfilePicture = user.profilePicture();
         this.newProfilePicture = this.oldProfilePicture;
+    }
+
+    public User(ListPostsQuery.User user){
+        this.idUser = user.id();
+        this.name = user.name();
+        this.surname = user.surname();
+        this.username = user.username();
+        this.phone = user.phone();
+        this.type = user.type();
     }
 
     public String getIdUser() {

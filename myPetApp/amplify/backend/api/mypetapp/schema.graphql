@@ -6,6 +6,7 @@ type User @model {
   phone: String!
   type: Int
   profilePicture: String
+  posts: [Post] @connection(name: "PostConnection")
 }
 
 type Pet @model {
@@ -21,4 +22,14 @@ type Pet @model {
 type FFact @model {
   id: ID!
   text: String!
+}
+
+type Post @model {
+  id: ID!
+  heading: String!
+  text: String
+  picture: String
+  createdAt: AWSDateTime!
+  user: User @connection(name: "PostConnection")
+
 }

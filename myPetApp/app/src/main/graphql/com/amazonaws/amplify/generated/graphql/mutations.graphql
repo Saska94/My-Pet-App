@@ -11,6 +11,19 @@ mutation CreateUser(
     phone
     type
     profilePicture
+    posts {
+      items {
+        id
+        heading
+        text
+        picture
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+    createdAt
+    updatedAt
   }
 }
 mutation UpdateUser(
@@ -25,6 +38,19 @@ mutation UpdateUser(
     phone
     type
     profilePicture
+    posts {
+      items {
+        id
+        heading
+        text
+        picture
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+    createdAt
+    updatedAt
   }
 }
 mutation DeleteUser(
@@ -39,6 +65,19 @@ mutation DeleteUser(
     phone
     type
     profilePicture
+    posts {
+      items {
+        id
+        heading
+        text
+        picture
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+    createdAt
+    updatedAt
   }
 }
 mutation CreatePet(
@@ -53,6 +92,8 @@ mutation CreatePet(
     type
     picture
     addoption
+    createdAt
+    updatedAt
   }
 }
 mutation UpdatePet(
@@ -67,6 +108,8 @@ mutation UpdatePet(
     type
     picture
     addoption
+    createdAt
+    updatedAt
   }
 }
 mutation DeletePet(
@@ -81,6 +124,8 @@ mutation DeletePet(
     type
     picture
     addoption
+    createdAt
+    updatedAt
   }
 }
 mutation CreateFFact(
@@ -90,6 +135,8 @@ mutation CreateFFact(
   createFFact(input: $input, condition: $condition) {
     id
     text
+    createdAt
+    updatedAt
   }
 }
 mutation UpdateFFact(
@@ -99,6 +146,8 @@ mutation UpdateFFact(
   updateFFact(input: $input, condition: $condition) {
     id
     text
+    createdAt
+    updatedAt
   }
 }
 mutation DeleteFFact(
@@ -108,5 +157,88 @@ mutation DeleteFFact(
   deleteFFact(input: $input, condition: $condition) {
     id
     text
+    createdAt
+    updatedAt
+  }
+}
+mutation CreatePost(
+  $input: CreatePostInput!
+  $condition: ModelPostConditionInput
+) {
+  createPost(input: $input, condition: $condition) {
+    id
+    heading
+    text
+    picture
+    createdAt
+    user {
+      id
+      name
+      surname
+      username
+      phone
+      type
+      profilePicture
+      posts {
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+    updatedAt
+  }
+}
+mutation UpdatePost(
+  $input: UpdatePostInput!
+  $condition: ModelPostConditionInput
+) {
+  updatePost(input: $input, condition: $condition) {
+    id
+    heading
+    text
+    picture
+    createdAt
+    user {
+      id
+      name
+      surname
+      username
+      phone
+      type
+      profilePicture
+      posts {
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+    updatedAt
+  }
+}
+mutation DeletePost(
+  $input: DeletePostInput!
+  $condition: ModelPostConditionInput
+) {
+  deletePost(input: $input, condition: $condition) {
+    id
+    heading
+    text
+    picture
+    createdAt
+    user {
+      id
+      name
+      surname
+      username
+      phone
+      type
+      profilePicture
+      posts {
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+    updatedAt
   }
 }

@@ -1,6 +1,7 @@
 package com.saska.mypetapp.singletons;
 
 import com.saska.mypetapp.db.Pet;
+import com.saska.mypetapp.db.Post;
 import com.saska.mypetapp.db.User;
 
 import java.util.List;
@@ -14,6 +15,7 @@ public class AppContext {
     private List<Pet> allPets;
     private List<Pet> filteredPets;
     private Pet selectedPet;
+    private Post selectedPost;
 
 
     private AppContext(){}
@@ -67,5 +69,13 @@ public class AppContext {
 
     public void setFilteredPets(List<Pet> filteredPets) {
         this.filteredPets = filteredPets;
+    }
+
+    public Post getSelectedPost() {
+        return selectedPost;
+    }
+
+    public void setSelectedPost(Post selectedPost) {
+        this.selectedPost = selectedPost;
     }
 }

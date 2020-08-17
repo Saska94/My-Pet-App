@@ -47,4 +47,10 @@ public class Helper {
         return picturePath.substring(picturePath.lastIndexOf("/"));
     }
 
+    public static String formatTime(String unformatted){
+        String[] parts = unformatted.split("T");
+        String result = parts[0].concat(" - ").concat(parts[1].substring(0, parts[1].indexOf(".")));
+        return result;
+    }
+
 }

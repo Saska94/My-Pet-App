@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/marg"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:layout_marginTop="5dp"
+    android:layout_weight="1"
+    android:background="@drawable/item_border"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/postUser"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:fontFamily="casual"
+        android:text="User"
+        android:textColor="@color/baseColor"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/postHeading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:fontFamily="casual"
+        android:text="Heading"
+        android:textColor="@color/baseColor"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/postDate"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:fontFamily="casual"
+        android:gravity="right"
+        android:text="date"
+        android:textAlignment="gravity"
+        android:textColor="@color/baseColor" />
+</LinearLayout>
+
