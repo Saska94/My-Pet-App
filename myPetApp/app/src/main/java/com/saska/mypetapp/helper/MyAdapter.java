@@ -3,7 +3,6 @@ package com.saska.mypetapp.helper;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,16 +97,24 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         void bindData(Pet item) {
             Log.i("RW", "RW - " + " binding data for pet - " + item.getName());
             txt_name.setText(item.getName());
-            //loadImage(petImageLayout, item.getImageBitmap());
+            loadImage(petImageLayout, item.getImageBitmap());
+            item.getPicture();
         }
     }
 
     void loadImage(RelativeLayout layout, Bitmap imageBitmap){
+        /*
             ImageView petImage = new ImageView(context);
-           // Bitmap createdBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.avatar);
+            //Bitmap createdBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.avatar);
             //petImage.setImageBitmap(createdBitmap);
+            Log.i("RW", "RW - " + " setting image bitmap ");
             petImage.setImageDrawable(new BitmapDrawable(context.getResources(), imageBitmap));
-            layout.addView(petImage);
+            layout.addView(petImage);*/
+
+        ImageView petImage = new ImageView(context);
+        petImage.setImageBitmap(imageBitmap);
+        //petImage.setImageDrawable(context.getDrawable(R.drawable.avatar));
+        layout.addView(petImage);
     }
 
 

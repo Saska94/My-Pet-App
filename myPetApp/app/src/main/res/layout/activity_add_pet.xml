@@ -8,24 +8,31 @@
     android:orientation="vertical"
     tools:context=".AddPetActivity">
 
-    <ProgressBar
-        android:id="@+id/progressBarAddPet"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:visibility="invisible" />
-
-    <TextView
-        android:id="@+id/info"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:fontFamily="casual"
-        android:gravity="center"
-        android:text="Add Pet"
-        android:textColor="@color/baseColor"
-        android:textSize="24sp" />
+        android:orientation="horizontal">
+
+        <ProgressBar
+            android:id="@+id/progressBarAddPet"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/info"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:fontFamily="casual"
+            android:gravity="fill"
+            android:text="Add Pet"
+            android:textColor="@color/baseColor"
+            android:textSize="24sp" />
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -144,7 +151,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="1"
         android:gravity="center"
         android:orientation="horizontal">
 

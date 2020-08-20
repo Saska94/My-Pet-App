@@ -71,7 +71,11 @@
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:background="@drawable/white_button_style"
-                android:text="Our Pets" />
+                android:fontFamily="casual"
+                android:text="Our Pets"
+                android:textColor="@color/baseColor"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/button3"
@@ -80,8 +84,12 @@
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:background="@drawable/white_button_style"
+                android:fontFamily="casual"
                 android:onClick="goToPosts"
-                android:text="Posts" />
+                android:text="Posts"
+                android:textColor="@color/baseColor"
+                android:textSize="18sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
             <LinearLayout
@@ -96,9 +104,13 @@
                     android:layout_height="match_parent"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
-                    android:onClick="goToAboutUs"
                     android:background="@drawable/white_button_style"
-                    android:text="About Us" />
+                    android:fontFamily="casual"
+                    android:onClick="goToAboutUs"
+                    android:text="About Us"
+                    android:textColor="@color/baseColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <Button
                     android:id="@+id/funFactsBtn"
@@ -107,8 +119,12 @@
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/white_button_style"
+                    android:fontFamily="casual"
                     android:onClick="goToFunFacts"
-                    android:text="Fun facts" />
+                    android:text="Fun facts"
+                    android:textColor="@color/baseColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
         <LinearLayout
@@ -124,7 +140,11 @@
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:background="@drawable/white_button_style"
-                android:text="Button" />
+                android:fontFamily="casual"
+                android:text="Button"
+                android:textColor="@color/baseColor"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/logoutBtn"
@@ -133,8 +153,12 @@
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:background="@drawable/white_button_style"
+                android:fontFamily="casual"
                 android:onClick="logOut"
-                android:text="Log out" />
+                android:text="Log out"
+                android:textColor="@color/baseColor"
+                android:textSize="18sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
     </LinearLayout>

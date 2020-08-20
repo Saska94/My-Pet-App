@@ -225,5 +225,11 @@ public class Pets extends AppCompatActivity {
         query();
     }
 
+    public void goToUser(View view){
+        Intent i = new Intent(Pets.this, UserActivity.class);
+        startActivity(i);
+    }
+
+
 
 }

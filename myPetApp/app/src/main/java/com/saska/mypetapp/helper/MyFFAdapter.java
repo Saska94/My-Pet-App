@@ -1,15 +1,18 @@
 package com.saska.mypetapp.helper;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.saska.mypetapp.R;
+import com.saska.mypetapp.db.DBHelper;
 import com.saska.mypetapp.db.FFact;
 
 import java.util.ArrayList;
@@ -69,12 +72,56 @@ public class MyFFAdapter extends RecyclerView.Adapter<MyFFAdapter.ViewHolder> {
         ViewHolder(View itemView) {
             super(itemView);
             ff_text = itemView.findViewById(R.id.ff_text);
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    System.out.println("LOOOONGGGG PRESS");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setCancelable(true);
+                    builder.setTitle("Delete Fun Fact");
+                    builder.setMessage("Are you sure you want to delete selected fun fact?");
+                    builder.setPositiveButton("Confirm",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    FFact toRemove = null;
+                                    for(FFact fact :mData){
+                                        if (ff_text.getText().toString().equals(fact.getText())){
+                                            Log.i("QQ", "DELETE-ING FF : " + fact.getText() + "WITH ID : " + fact.getId());
+                                            toRemove = fact;
+                                            break;
+                                        }
+                                    }
+                                    if (toRemove != null){
+                                        Log.i("QQ", "WHICH IS : " + getPosition());
+                                        removeAt(getPosition());
+                                        DBHelper.deleteFunFact(toRemove.getId());
+                                    }
+                                }
+                            });
+                    builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    return true;
+                };
+            });
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     System.out.println("Selected " + ff_text.getText().toString() );
                 }
             });
+        }
+
+        public void removeAt(int position) {
+            mData.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, mData.size());
         }
 
         void bindData(FFact item) {

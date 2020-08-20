@@ -4,7 +4,7 @@ import com.amazonaws.amplify.generated.graphql.ListFFactsQuery;
 
 public class FFact {
 
-    private int id;
+    private String id;
     private String text;
 
     public FFact(){};
@@ -14,6 +14,7 @@ public class FFact {
     }
 
     public FFact(ListFFactsQuery.Item ffact){
+        this.id = ffact.id();
         this.text = ffact.text();
     }
 
@@ -23,5 +24,9 @@ public class FFact {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getId() {
+        return id;
     }
 }

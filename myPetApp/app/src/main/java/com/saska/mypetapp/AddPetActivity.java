@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -45,6 +44,7 @@ public class AddPetActivity extends AppCompatActivity {
         toaster = new Toaster(this);
         camera = new Camera(this);
         progressBarAddPet = (ProgressBar) findViewById(R.id.progressBarAddPet);
+        progressBarAddPet.setVisibility(View.INVISIBLE);
 
 
         String[] petTypes = {"Dog", "Cat", "Turtle", "Rabbit", "Bird", "Other"};
@@ -68,7 +68,9 @@ public class AddPetActivity extends AppCompatActivity {
 
     public void addPet(View view){
 
-        uploadWithTransferUtility(progressBarAddPet, getWindow(), camera.getPicturePath());
+        progressBarAddPet.setVisibility(View.VISIBLE);
+        Helper.blockTouch(getWindow());
+        uploadWithTransferUtility(camera.getPicturePath());
 
     }
 
@@ -109,7 +111,7 @@ public class AddPetActivity extends AppCompatActivity {
         return "public/pets/" + new File(localPath).getName();
     }
 
-    public void uploadWithTransferUtility(final ProgressBar progressBar, final Window window, String localPath) {
+    public void uploadWithTransferUtility(String localPath) {
         String key = getS3Key(localPath);
 
         Log.d(CLASS_NAME, "Uploading file from " + localPath + " to " + key);
@@ -126,9 +128,7 @@ public class AddPetActivity extends AppCompatActivity {
             public void onStateChanged(int id, TransferState state) {
                 if (TransferState.COMPLETED == state) {
                     // Handle a completed upload.
-                    Log.d(CLASS_NAME, "Upload is completed. ");
-                    progressBar.setVisibility(View.INVISIBLE);
-                    Helper.unblockTouch(window);
+                    Log.d(CLASS_NAME, "Upload is completed. Saving to db next... ");
 
                     // Upload is successful. Save the rest and send the mutation to server.
                     save();
@@ -152,8 +152,6 @@ public class AddPetActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressBar.setVisibility(View.INVISIBLE);
-                        Helper.unblockTouch(window);
                         Toast.makeText(AddPetActivity.this, "Failed to upload photo", Toast.LENGTH_LONG).show();
                     }
                 });
@@ -175,8 +173,6 @@ public class AddPetActivity extends AppCompatActivity {
             String type = spinnerPetTypes.getSelectedItem().toString();
             int adoption = (spinnerLost.getSelectedItem().toString().equals("Lost")) ? 0 : 1;
             String picture = getS3Key(camera.getPicturePath());
-            progressBarAddPet.setVisibility(View.VISIBLE);
-            Helper.blockTouch(getWindow());
             DBHelper.addPet(toaster, progressBarAddPet, getWindow(),name, description, location, type, adoption, picture);
         }
 

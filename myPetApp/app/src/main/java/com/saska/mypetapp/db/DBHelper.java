@@ -13,6 +13,7 @@ import com.amazonaws.amplify.generated.graphql.CreateFFactMutation;
 import com.amazonaws.amplify.generated.graphql.CreatePetMutation;
 import com.amazonaws.amplify.generated.graphql.CreatePostMutation;
 import com.amazonaws.amplify.generated.graphql.CreateUserMutation;
+import com.amazonaws.amplify.generated.graphql.DeleteFFactMutation;
 import com.amazonaws.amplify.generated.graphql.DeletePostMutation;
 import com.amazonaws.amplify.generated.graphql.ListPetsQuery;
 import com.amazonaws.amplify.generated.graphql.ListPostsQuery;
@@ -39,6 +40,7 @@ import type.CreateFFactInput;
 import type.CreatePetInput;
 import type.CreatePostInput;
 import type.CreateUserInput;
+import type.DeleteFFactInput;
 import type.DeletePostInput;
 import type.ModelPetFilterInput;
 import type.ModelPostFilterInput;
@@ -372,8 +374,43 @@ public class DBHelper {
 
     }
 
+    public static void deleteFunFact(final String idFF) {
+        DeleteFFactInput input = DeleteFFactInput.builder()
+                .id(idFF)
+                .build();
 
-    // Posts
+        GraphQLCall.Callback<DeleteFFactMutation.Data> mutateCallback = new GraphQLCall.Callback<DeleteFFactMutation.Data>() {
+            @Override
+            public void onResponse(@Nonnull final Response<DeleteFFactMutation.Data> response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(CLASS_NAME, "Fun fact deleted!");
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(@Nonnull final ApolloException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(CLASS_NAME, "Failed to delete fun fact!");
+                    }
+                });
+            }
+        };
+
+        DeleteFFactMutation deleteFFactMutation = DeleteFFactMutation.builder()
+                .input(input)
+                .build();
+        ClientFactory.appSyncClient().mutate(deleteFFactMutation).enqueue(mutateCallback);
+
+    }
+
+
+
+        // Posts
 
     public static void addPost(final ProgressBar progressBarPost, final Window window, final Toaster toaster,  String heading, String text, User user){
 
@@ -502,6 +539,9 @@ public class DBHelper {
         ClientFactory.appSyncClient().mutate(deletePostMutation).enqueue(mutateCallback);
 
     }
+
+
+
 
 
 }
