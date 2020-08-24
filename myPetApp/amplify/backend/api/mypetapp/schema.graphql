@@ -17,6 +17,8 @@ type Pet @model {
   type: String!
   picture: String
   addoption: Int!
+  reserved: Int!
+  reservedAt: AWSDateTime
 }
 
 type FFact @model {

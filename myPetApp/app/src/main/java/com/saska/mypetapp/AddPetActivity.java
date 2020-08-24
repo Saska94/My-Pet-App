@@ -18,6 +18,7 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.saska.mypetapp.db.ClientFactory;
 import com.saska.mypetapp.db.DBHelper;
+import com.saska.mypetapp.db.Pet;
 import com.saska.mypetapp.helper.Camera;
 import com.saska.mypetapp.helper.Helper;
 import com.saska.mypetapp.helper.Toaster;
@@ -70,7 +71,12 @@ public class AddPetActivity extends AppCompatActivity {
 
         progressBarAddPet.setVisibility(View.VISIBLE);
         Helper.blockTouch(getWindow());
-        uploadWithTransferUtility(camera.getPicturePath());
+        if (camera.getPicturePath() != null){
+            uploadWithTransferUtility(camera.getPicturePath());
+        }
+        else {
+            save();
+        }
 
     }
 
@@ -167,13 +173,23 @@ public class AddPetActivity extends AppCompatActivity {
         String location = ((EditText) findViewById(R.id.petLocation)).getText().toString();
 
         if (name.isEmpty() || location.isEmpty()){
+            progressBarAddPet.setVisibility(View.INVISIBLE);
+            Helper.unblockTouch(getWindow());
             toaster.make("Name and location are required fields.");
         }
         else{
             String type = spinnerPetTypes.getSelectedItem().toString();
             int adoption = (spinnerLost.getSelectedItem().toString().equals("Lost")) ? 0 : 1;
-            String picture = getS3Key(camera.getPicturePath());
-            DBHelper.addPet(toaster, progressBarAddPet, getWindow(),name, description, location, type, adoption, picture);
+            String picture = (camera.getPicturePath()!= null) ? getS3Key(camera.getPicturePath()) : null;
+            Pet pet = new Pet();
+            pet.setReserved(0);
+            pet.setAdoption(adoption);
+            pet.setDescription(description);
+            pet.setType(type);
+            pet.setName(name);
+            pet.setLocation(location);
+            pet.setPicture(picture);
+            DBHelper.addPet(toaster, progressBarAddPet, getWindow(), pet);
         }
 
     }

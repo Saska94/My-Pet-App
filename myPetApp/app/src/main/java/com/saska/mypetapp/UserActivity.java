@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +32,8 @@ public class UserActivity extends AppCompatActivity {
 
     private static User activeUser;
     private ProgressBar progressBar;
+
+    private ImageView profileImage;
 
     public UserActivity(){
         CLASS_NAME = getClass().getName();
@@ -65,16 +66,13 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void loadProfileImage(){
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.profileImageLayout);
-        layout.removeAllViews();
-        if (activeUser.getOldProfilePicture() != null){
+        profileImage = (ImageView) findViewById(R.id.profileImage);
+        if (activeUser.getPicture() != null){
             final String localPath = Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_DOWNLOADS).getAbsolutePath().concat("/").concat(activeUser.getOldProfilePicture());
-            activeUser.setLocalPicturePath(localPath);
+                    Environment.DIRECTORY_DOWNLOADS).getAbsolutePath().concat("/").concat(activeUser.getPicture());
             File file = new File(localPath);
             // If we already downloaded image, load it from local, do not contact s3
             if (file.exists()){
-                ImageView profileImage = new ImageView(getApplicationContext());
                 profileImage.setImageBitmap(BitmapFactory.decodeFile(localPath));
                 profileImage.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -82,34 +80,16 @@ public class UserActivity extends AppCompatActivity {
                         goToEditProfile();
                     }
                 });
-                layout.addView(profileImage);
             }
             else{
                 // Profile image not downloaded, get it from s3 bucket
                 ProgressBar loadingImage = new ProgressBar(this);
                 loadingImage.setForegroundGravity(Gravity.CENTER);
                 loadingImage.setVisibility(View.VISIBLE);
-                layout.addView(loadingImage);
-                downloadWithTransferUtility(layout, activeUser.getOldProfilePicture());
+                downloadWithTransferUtility(activeUser.getPicture());
             }
 
         }
-        else{
-            // If user does not have profile image, load avatar
-            loadAvatarImage(layout);
-        }
-    }
-
-    private void loadAvatarImage(RelativeLayout layout){
-        ImageView profileImage = new ImageView(this);
-        profileImage.setImageDrawable(getDrawable(R.drawable.avatar));
-        profileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToEditProfile();
-            }
-        });
-        layout.addView(profileImage);
     }
 
     @Override
@@ -121,10 +101,7 @@ public class UserActivity extends AppCompatActivity {
         loadProfileImage();
     }
 
-    public void logOut(View view){/*
-            progressBar.setVisibility(View.VISIBLE);
-            Helper.blockTouch(getWindow());
-            AwsClient.signOut(this, progressBar, getWindow());*/
+    public void logOut(View view){
         AppContext.getContext().clearContext();
         AWSMobileClient.getInstance().signOut();
         startActivity(new Intent(this, MainActivity.class));
@@ -150,7 +127,7 @@ public class UserActivity extends AppCompatActivity {
         Intent i = new Intent(UserActivity.this, PostsActivity.class);
         startActivity(i);
     }
-    private void downloadWithTransferUtility(final RelativeLayout layout, final String photo) {
+    private void downloadWithTransferUtility(final String photo) {
 
         final String localPath = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + photo;
@@ -167,7 +144,6 @@ public class UserActivity extends AppCompatActivity {
             public void onStateChanged(int id, TransferState state) {
                 if (TransferState.COMPLETED == state) {
                     // Handle a completed upload.
-                    ImageView profileImage = new ImageView(getApplicationContext());
                     profileImage.setImageBitmap(BitmapFactory.decodeFile(localPath));
                     profileImage.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -175,8 +151,6 @@ public class UserActivity extends AppCompatActivity {
                             goToEditProfile();
                         }
                     });
-                    layout.removeAllViews();
-                    layout.addView(profileImage);
                 }
             }
 

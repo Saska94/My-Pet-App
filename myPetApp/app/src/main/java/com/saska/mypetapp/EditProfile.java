@@ -1,23 +1,18 @@
 package com.saska.mypetapp;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
@@ -68,33 +63,21 @@ public class EditProfile extends AppCompatActivity {
 
         loadImage();
 
-        Button updateInfoButton = (Button) findViewById(R.id.updateInfoButton);
-        updateInfoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                uploadAndSave();
-            }
-        });
-
 
     }
 
     private void loadImage(){
-        ImageView profileImage = (ImageView) findViewById(R.id.profileImage);
-        if (activeUser.getOldProfilePicture() != null){
-            profileImage.setImageBitmap(BitmapFactory.decodeFile(activeUser.getLocalPicturePath()));
-        }
-        else{
-            profileImage.setImageDrawable(getDrawable(R.drawable.avatar));
+        if (activeUser.getPicture() != null){
+            final String localPath = Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOWNLOADS).getAbsolutePath().concat("/").concat(activeUser.getPicture());
+            profileImage.setImageBitmap(BitmapFactory.decodeFile(localPath));
         }
     }
 
     public void takePhoto (View view){
-
         if (camera.hasCamera() && camera.hasCameraApplication()){
             camera.takePhoto();
         }
-
     }
 
     public void choosePhoto (View view){
@@ -129,14 +112,13 @@ public class EditProfile extends AppCompatActivity {
 
     private String getS3Key(String localPath) {
         //We have read and write ability under the public folder
-        return "public/" + new File(localPath).getName();
+        return "public/profile/" + new File(localPath).getName();
     }
 
     public void uploadWithTransferUtility(final ProgressBar progressBar,final Window window, String localPath) {
         String key = getS3Key(localPath);
 
         Log.d(CLASS_NAME, "Uploading file from " + localPath + " to " + key);
-        AppContext.getContext().getActiveUser().setNewProfilePicture(key);
 
         TransferObserver uploadObserver =
                 ClientFactory.transferUtility().upload(
@@ -186,27 +168,26 @@ public class EditProfile extends AppCompatActivity {
         });
     }
 
-    private void uploadAndSave(){
+    public void uploadAndSave(View view){
 
-        if ( !AppContext.getContext().getActiveUser().samePictures() && AppContext.getContext().getActiveUser().getNewProfilePicture() != null ) {
-            // For higher Android levels, we need to check permission at runtime
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                AppContext.getContext().getActiveUser().setOldProfilePicture(activeUser.getLocalPicturePath());
-                // Permission is not granted
-                Log.d(CLASS_NAME, "READ_EXTERNAL_STORAGE permission not granted! Requesting...");
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        1);
+        if (camera.getPicturePath()!= null){
+            /*final String localPath = Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOWNLOADS).getAbsolutePath().concat("/").concat(camera.getPicturePath());
+            File file = new File(localPath);
+            if (file.exists()){
+                save();
             }
-
-            ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBarEditProfile);
-            progressBar.setVisibility(View.VISIBLE);
-            Helper.blockTouch(getWindow());
-            uploadWithTransferUtility(progressBar, getWindow(), activeUser.getLocalPicturePath());
-        } else {
+            else{*/
+                ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBarEditProfile);
+                progressBar.setVisibility(View.VISIBLE);
+                Helper.blockTouch(getWindow());
+                uploadWithTransferUtility(progressBar, getWindow(), camera.getPicturePath());
+            //}
+        }
+        else{
             save();
         }
+
     }
 
 
@@ -215,23 +196,17 @@ public class EditProfile extends AppCompatActivity {
         String surname = ((EditText) findViewById(R.id.editTextSurname)).getText().toString();
         String phone = ((EditText) findViewById(R.id.editTextPhone)).getText().toString();
 
-        User activeUser = AppContext.getContext().getActiveUser();
-        if (activeUser.getName().equals(name) && activeUser.getSurname().equals(surname) && activeUser.getPhone().equals(phone)
-                && AppContext.getContext().getActiveUser().samePictures())
-        {
-            toaster.make("No changes detected");
-        }
-        else{
-            AppContext.getContext().getActiveUser().setName(name);
-            AppContext.getContext().getActiveUser().setSurname(surname);
-            AppContext.getContext().getActiveUser().setPhone(phone);
 
-            ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBarEditProfile);
-            progressBar.setVisibility(View.VISIBLE);
-            Helper.blockTouch(getWindow());
-            DBHelper.updateUser(progressBar, getWindow(), toaster, AppContext.getContext().getActiveUser());
-            AppContext.getContext().getActiveUser().setOldProfilePicture(AppContext.getContext().getActiveUser().getNewProfilePicture());
-        }
+        AppContext.getContext().getActiveUser().setName(name);
+        AppContext.getContext().getActiveUser().setSurname(surname);
+        AppContext.getContext().getActiveUser().setPhone(phone);
+        String image = (camera.getPicturePath() == null)? null : getS3Key(camera.getPicturePath());
+        AppContext.getContext().getActiveUser().setPicture(image);
+
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBarEditProfile);
+        progressBar.setVisibility(View.VISIBLE);
+        Helper.blockTouch(getWindow());
+        DBHelper.updateUser(progressBar, getWindow(), toaster, AppContext.getContext().getActiveUser());
 
 
     }
@@ -239,14 +214,15 @@ public class EditProfile extends AppCompatActivity {
     public void clearImage(View view){
         final String localPath = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOWNLOADS).getAbsolutePath().concat("/").concat("public/avatar.png");
-        activeUser.setLocalPicturePath(localPath);
-        // we already downloaded image, load it from local, do not contact s3
-        ImageView profileImage = ((ImageView)findViewById(R.id.profileImage));
+        activeUser.setPhone(null);
         profileImage.setImageBitmap(BitmapFactory.decodeFile(localPath));
-        AppContext.getContext().getActiveUser().setNewProfilePicture("public/avatar.png");
     }
 
 
+    public void goToUser(View view){
+        Intent i = new Intent(EditProfile.this, UserActivity.class);
+        startActivity(i);
+    }
 
 
 }

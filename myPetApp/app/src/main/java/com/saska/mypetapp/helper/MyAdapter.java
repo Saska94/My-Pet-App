@@ -2,14 +2,12 @@ package com.saska.mypetapp.helper;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -77,12 +75,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     // stores and recycles views as they are scrolled off screen
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView txt_name;
-        RelativeLayout petImageLayout;
+        ImageView petImage;
 
         ViewHolder(View itemView) {
             super(itemView);
             txt_name = itemView.findViewById(R.id.petName);
-            petImageLayout = itemView.findViewById(R.id.petImageLayout);
+            petImage = (ImageView) itemView.findViewById(R.id.petImage);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -97,25 +95,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         void bindData(Pet item) {
             Log.i("RW", "RW - " + " binding data for pet - " + item.getName());
             txt_name.setText(item.getName());
-            loadImage(petImageLayout, item.getImageBitmap());
-            item.getPicture();
+            petImage.setImageBitmap(item.getImageBitmap());
         }
     }
 
-    void loadImage(RelativeLayout layout, Bitmap imageBitmap){
-        /*
-            ImageView petImage = new ImageView(context);
-            //Bitmap createdBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.avatar);
-            //petImage.setImageBitmap(createdBitmap);
-            Log.i("RW", "RW - " + " setting image bitmap ");
-            petImage.setImageDrawable(new BitmapDrawable(context.getResources(), imageBitmap));
-            layout.addView(petImage);*/
-
-        ImageView petImage = new ImageView(context);
-        petImage.setImageBitmap(imageBitmap);
-        //petImage.setImageDrawable(context.getDrawable(R.drawable.avatar));
-        layout.addView(petImage);
-    }
 
 
 

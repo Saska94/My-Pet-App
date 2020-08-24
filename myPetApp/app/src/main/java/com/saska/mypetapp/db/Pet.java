@@ -8,34 +8,37 @@ import java.io.Serializable;
 
 public class Pet implements Serializable {
 
-    private int id, adoption;
-    private String name, description, location, type, picture;
+    private int adoption, reserved;
+    private String id, name, description, location, type, picture;
     private Bitmap imageBitmap;
 
     public Pet(){}
 
-    public Pet(String name, String description, String location, String type, String picture) {
+    public Pet(String name, String description, String location, String type, String picture,int reserved) {
         this.name = name;
         this.description = description;
         this.location = location;
         this.type = type;
         this.picture = picture;
+        this.reserved = reserved;
     }
 
     public Pet(ListPetsQuery.Item pet){
+        this.id = pet.id();
         this.name = pet.name();
         this.description = pet.description();
         this.location = pet.location();
         this.type = pet.type();
         this.picture = pet.picture();
         this.adoption = pet.addoption();
+        this.reserved = pet.reserved();
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -93,5 +96,13 @@ public class Pet implements Serializable {
 
     public void setImageBitmap(Bitmap imageBitmap) {
         this.imageBitmap = imageBitmap;
+    }
+
+    public int getReserved() {
+        return reserved;
+    }
+
+    public void setReserved(int reserved) {
+        this.reserved = reserved;
     }
 }

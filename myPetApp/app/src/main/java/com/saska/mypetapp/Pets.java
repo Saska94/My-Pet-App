@@ -1,6 +1,8 @@
 package com.saska.mypetapp;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -84,12 +86,13 @@ public class Pets extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 checked = isChecked;
-                query();
+                loadSwitchItems();
             }
         });
 
-    }
+        refreshFromDatabase();
 
+    }
 
 
     @Override
@@ -99,7 +102,26 @@ public class Pets extends AppCompatActivity {
         clearFilterButton();
 
         // Query list data when we return to the screen
-        query();
+        //query();
+    }
+
+    private void loadSwitchItems(){
+        List<Pet> petList = (AppContext.getContext().getFilteredPets() == null) ? AppContext.getContext().getAllPets() : AppContext.getContext().getFilteredPets();
+        List<Pet> listToView = new ArrayList<>();
+        for(Pet pet : petList){
+            if ((checked && pet.getAdoption()==1) || (!checked && pet.getAdoption()==0)){
+                listToView.add(pet);
+            }
+        }
+        mAdapter.setItems(listToView);
+        mAdapter.notifyDataSetChanged();
+
+        if(listToView.isEmpty()){
+            msgText.setVisibility(View.VISIBLE);
+        }
+        else {
+            msgText.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void clearFilterButton(){
@@ -111,7 +133,7 @@ public class Pets extends AppCompatActivity {
         }
     }
 
-    public void query(){
+    public void refreshFromDatabase(){
         ClientFactory.appSyncClient().query(ListPetsQuery.builder().build())
                 .responseFetcher(AppSyncResponseFetchers.CACHE_AND_NETWORK)
                 .enqueue(queryCallback);
@@ -133,17 +155,17 @@ public class Pets extends AppCompatActivity {
                     petList = new ArrayList<>();
                     for (ListPetsQuery.Item pet: mPets) {
                         Pet dbPet = new Pet(pet);
-                        allPets.add(dbPet);/*
-                        Log.i("AAA", "ITEM : " + dbPet.getName());
-                        final String localPath = Environment.getExternalStoragePublicDirectory(
-                                Environment.DIRECTORY_DOWNLOADS).getAbsolutePath().concat("/").concat(pet.picture());
-                        File file = new File(localPath);
-                        if (!file.exists()){
-                            downloadImage(pet.picture());
+                        allPets.add(dbPet);
+                            String localPath = Environment.getExternalStoragePublicDirectory(
+                                Environment.DIRECTORY_DOWNLOADS).getAbsolutePath().concat("/").concat("public/avatar.png");
+                        if (pet.picture() != null){
+                            localPath = Environment.getExternalStoragePublicDirectory(
+                                    Environment.DIRECTORY_DOWNLOADS).getAbsolutePath().concat("/").concat(pet.picture());
                         }
+
                         BitmapFactory.Options options = new BitmapFactory.Options();
                         options.inPreferredConfig = Bitmap.Config.RGB_565;
-                        dbPet.setImageBitmap(BitmapFactory.decodeFile(localPath, options));*/
+                        dbPet.setImageBitmap(BitmapFactory.decodeFile(localPath,options));
                         if ((checked && dbPet.getAdoption()==1) || (!checked && dbPet.getAdoption()==0)){
                             petList.add(dbPet);
                         }
@@ -158,8 +180,6 @@ public class Pets extends AppCompatActivity {
                             }
                         }
                     }
-
-                    petProgressBar.setVisibility(View.INVISIBLE);
                     mAdapter.setItems(petList);
                     mAdapter.notifyDataSetChanged();
                     if(petList.isEmpty()){
@@ -168,6 +188,7 @@ public class Pets extends AppCompatActivity {
                     else {
                         msgText.setVisibility(View.INVISIBLE);
                     }
+                    petProgressBar.setVisibility(View.INVISIBLE);
                 }
             });
         }
@@ -222,7 +243,7 @@ public class Pets extends AppCompatActivity {
     public void clearFilters(View view){
         AppContext.getContext().setFilteredPets(null);
         clearFilterButton();
-        query();
+        loadSwitchItems();
     }
 
     public void goToUser(View view){

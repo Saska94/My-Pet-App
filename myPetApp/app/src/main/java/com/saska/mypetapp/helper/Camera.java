@@ -12,8 +12,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.saska.mypetapp.singletons.AppContext;
-
 import java.util.List;
 
 public class Camera {
@@ -67,8 +65,6 @@ public class Camera {
         String picturePath = cursor.getString(columnIndex);
         cursor.close();
         this.picturePath = picturePath;
-        AppContext.getContext().getActiveUser().setNewProfilePicture(Helper.getPictureName(picturePath));
-
     }
 
     public boolean hasCamera(){

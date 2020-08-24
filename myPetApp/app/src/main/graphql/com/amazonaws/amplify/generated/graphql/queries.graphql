@@ -55,6 +55,8 @@ query GetPet($id: ID!) {
     type
     picture
     addoption
+    reserved
+    reservedAt
     createdAt
     updatedAt
   }
@@ -69,6 +71,8 @@ query ListPets($filter: ModelPetFilterInput, $limit: Int, $nextToken: String) {
       type
       picture
       addoption
+      reserved
+      reservedAt
       createdAt
       updatedAt
     }

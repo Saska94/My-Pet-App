@@ -2,24 +2,23 @@ package com.saska.mypetapp.db;
 
 import com.amazonaws.amplify.generated.graphql.ListPostsQuery;
 import com.amazonaws.amplify.generated.graphql.ListUsersQuery;
-import com.saska.mypetapp.helper.Helper;
 
 import java.io.Serializable;
 
 public class User implements Serializable {
 
-    private String idUser, name, surname, username, phone, oldProfilePicture, newProfilePicture, localPicturePath;
+    private String idUser, name, surname, username, phone, picture;
     private int type;
 
     public User(){}
 
-    public User(String name, String surname, String username, String phone, int type, String oldProfilePicture) {
+    public User(String name, String surname, String username, String phone, int type, String picture) {
         this.name = name;
         this.surname = surname;
         this.username = username;
         this.phone = phone;
         this.type = type;
-        this.oldProfilePicture = oldProfilePicture;
+        this.picture = picture;
     }
 
     public User(ListUsersQuery.Item user){
@@ -29,8 +28,7 @@ public class User implements Serializable {
         this.username = user.username();
         this.phone = user.phone();
         this.type = user.type();
-        this.oldProfilePicture = user.profilePicture();
-        this.newProfilePicture = this.oldProfilePicture;
+        this.picture = user.profilePicture();
     }
 
     public User(ListPostsQuery.User user){
@@ -40,6 +38,7 @@ public class User implements Serializable {
         this.username = user.username();
         this.phone = user.phone();
         this.type = user.type();
+        this.picture = user.profilePicture();
     }
 
     public String getIdUser() {
@@ -90,42 +89,12 @@ public class User implements Serializable {
         this.type = type;
     }
 
-    public String getOldProfilePicture() {
-        return oldProfilePicture;
+    public String getPicture() {
+        return picture;
     }
 
-    public void setOldProfilePicture(String oldProfilePicture) {
-        this.oldProfilePicture = oldProfilePicture;
-    }
-
-    public String getNewProfilePicture() {
-        return newProfilePicture;
-    }
-
-    public void setNewProfilePicture(String newProfilePicture) {
-        this.newProfilePicture = newProfilePicture;
-    }
-
-    public String getLocalPicturePath() {
-        return localPicturePath;
-    }
-
-    public void setLocalPicturePath(String localPicturePath) {
-        this.localPicturePath = localPicturePath;
-    }
-
-    public boolean samePictures(){
-        boolean result;
-        if (oldProfilePicture == null && newProfilePicture == null) {
-            result = true;
-        }
-        else if (oldProfilePicture == null || newProfilePicture == null){
-            result = false;
-        }
-        else{
-            result = Helper.getPictureName(oldProfilePicture).equals(Helper.getPictureName(newProfilePicture));
-        }
-        return result;
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 
 }

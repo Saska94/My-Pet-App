@@ -14,16 +14,19 @@ import com.amazonaws.amplify.generated.graphql.CreatePetMutation;
 import com.amazonaws.amplify.generated.graphql.CreatePostMutation;
 import com.amazonaws.amplify.generated.graphql.CreateUserMutation;
 import com.amazonaws.amplify.generated.graphql.DeleteFFactMutation;
+import com.amazonaws.amplify.generated.graphql.DeletePetMutation;
 import com.amazonaws.amplify.generated.graphql.DeletePostMutation;
 import com.amazonaws.amplify.generated.graphql.ListPetsQuery;
 import com.amazonaws.amplify.generated.graphql.ListPostsQuery;
 import com.amazonaws.amplify.generated.graphql.ListUsersQuery;
+import com.amazonaws.amplify.generated.graphql.UpdatePetMutation;
 import com.amazonaws.amplify.generated.graphql.UpdateUserMutation;
 import com.amazonaws.mobileconnectors.appsync.fetcher.AppSyncResponseFetchers;
 import com.apollographql.apollo.GraphQLCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.saska.mypetapp.PetDetailsActivity;
+import com.saska.mypetapp.Pets;
 import com.saska.mypetapp.PostDetailsActivity;
 import com.saska.mypetapp.PostsActivity;
 import com.saska.mypetapp.helper.Helper;
@@ -41,11 +44,13 @@ import type.CreatePetInput;
 import type.CreatePostInput;
 import type.CreateUserInput;
 import type.DeleteFFactInput;
+import type.DeletePetInput;
 import type.DeletePostInput;
 import type.ModelPetFilterInput;
 import type.ModelPostFilterInput;
 import type.ModelStringInput;
 import type.ModelUserFilterInput;
+import type.UpdatePetInput;
 import type.UpdateUserInput;
 
 import static com.amazonaws.mobile.auth.core.internal.util.ThreadUtils.runOnUiThread;
@@ -146,7 +151,7 @@ public class DBHelper {
                 .name(user.getName())
                 .surname(user.getSurname())
                 .phone(user.getPhone())
-                .profilePicture(user.getNewProfilePicture())
+                .profilePicture(user.getPicture())
                 .build();
 
         GraphQLCall.Callback<UpdateUserMutation.Data> mutateCallback = new GraphQLCall.Callback<UpdateUserMutation.Data>() {
@@ -234,16 +239,16 @@ public class DBHelper {
 
     // PETS
 
-    public static void addPet(final Toaster toaster, final ProgressBar progressBarAddPet, final Window window, String name, String description,
-                              String location, String type, int adoption, String picture){
+    public static void addPet(final Toaster toaster, final ProgressBar progressBarAddPet, final Window window, final Pet pet){
 
         CreatePetInput input = CreatePetInput.builder()
-                .name(name)
-                .description(description)
-                .location(location)
-                .type(type)
-                .addoption(adoption)
-                .picture(picture)
+                .name(pet.getName())
+                .description(pet.getDescription())
+                .location(pet.getLocation())
+                .type(pet.getType())
+                .addoption(pet.getAdoption())
+                .picture(pet.getPicture())
+                .reserved(pet.getReserved())
                 .build();
 
         // Mutation callback code
@@ -324,6 +329,90 @@ public class DBHelper {
         ModelPetFilterInput modelPetFilterInput = ModelPetFilterInput.builder().name(modelStringInput).build();
         ClientFactory.appSyncClient().query(ListPetsQuery.builder().filter(modelPetFilterInput).build())
                 .enqueue(queryCallback);
+
+    }
+
+    public static void updatePet(final ProgressBar progressBar, final Window window, final Toaster toaster,Pet pet){
+        UpdatePetInput input = UpdatePetInput.builder()
+                .id(pet.getId())
+                .reserved(pet.getReserved())
+                .build();
+
+        GraphQLCall.Callback<UpdatePetMutation.Data> mutateCallback = new GraphQLCall.Callback<UpdatePetMutation.Data>() {
+            @Override
+            public void onResponse(@Nonnull final Response<UpdatePetMutation.Data> response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(CLASS_NAME, "Pet updated!");
+                        toaster.make("Pet updated!");
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(window);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(@Nonnull final ApolloException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(CLASS_NAME, "Failed to update pet!");
+                        toaster.make("Something went wrong!");
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(window);
+                    }
+                });
+            }
+        };
+
+        UpdatePetMutation updatePetMutation = UpdatePetMutation.builder()
+                .input(input)
+                .build();
+        ClientFactory.appSyncClient().mutate(updatePetMutation).enqueue(mutateCallback);
+
+    }
+
+    public static void deletePet(final ProgressBar progressBar, final Window window, final Toaster toaster, final Activity activity, String idPet){
+        DeletePetInput input = DeletePetInput.builder()
+                .id(idPet)
+                .build();
+
+        GraphQLCall.Callback<DeletePetMutation.Data> mutateCallback = new GraphQLCall.Callback<DeletePetMutation.Data>() {
+            @Override
+            public void onResponse(@Nonnull final Response<DeletePetMutation.Data> response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(CLASS_NAME, "Pet deleted!");
+                        toaster.make("Pet deleted!");
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(window);
+                        Intent intent = new Intent(activity, Pets.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        activity.getApplicationContext().startActivity(intent);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(@Nonnull final ApolloException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(CLASS_NAME, "Failed to delete pet!");
+                        toaster.make("Something went wrong!");
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(window);
+                    }
+                });
+            }
+        };
+
+        DeletePetMutation deletePetMutation = DeletePetMutation.builder()
+                .input(input)
+                .build();
+        ClientFactory.appSyncClient().mutate(deletePetMutation).enqueue(mutateCallback);
 
     }
 
@@ -412,12 +501,13 @@ public class DBHelper {
 
         // Posts
 
-    public static void addPost(final ProgressBar progressBarPost, final Window window, final Toaster toaster,  String heading, String text, User user){
+    public static void addPost(final ProgressBar progressBarPost, final Window window, final Toaster toaster,  String heading, String text, User user, final String picture){
 
         CreatePostInput input = CreatePostInput.builder()
                 .heading(heading)
                 .text(text)
                 .postUserId(user.getIdUser())
+                .picture(picture)
                 .build();
 
         // Mutation callback code

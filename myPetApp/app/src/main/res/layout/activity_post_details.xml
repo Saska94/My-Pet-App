@@ -20,7 +20,7 @@
             android:orientation="horizontal">
 
             <ProgressBar
-                android:id="@+id/progressBarPetDetails"
+                android:id="@+id/progressBarPostDetails"
                 style="?android:attr/progressBarStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
                 android:textStyle="bold" />
 
             <ImageView
-                android:id="@+id/imageView4"
+                android:id="@+id/postDetailsImage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

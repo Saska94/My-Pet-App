@@ -80,6 +80,8 @@ subscription OnCreatePet {
     type
     picture
     addoption
+    reserved
+    reservedAt
     createdAt
     updatedAt
   }
@@ -93,6 +95,8 @@ subscription OnUpdatePet {
     type
     picture
     addoption
+    reserved
+    reservedAt
     createdAt
     updatedAt
   }
@@ -106,6 +110,8 @@ subscription OnDeletePet {
     type
     picture
     addoption
+    reserved
+    reservedAt
     createdAt
     updatedAt
   }

@@ -92,6 +92,8 @@ mutation CreatePet(
     type
     picture
     addoption
+    reserved
+    reservedAt
     createdAt
     updatedAt
   }
@@ -108,6 +110,8 @@ mutation UpdatePet(
     type
     picture
     addoption
+    reserved
+    reservedAt
     createdAt
     updatedAt
   }
@@ -124,6 +128,8 @@ mutation DeletePet(
     type
     picture
     addoption
+    reserved
+    reservedAt
     createdAt
     updatedAt
   }

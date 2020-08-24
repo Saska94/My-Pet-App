@@ -99,9 +99,12 @@
                 android:id="@+id/profileImage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter" />
+                android:foregroundGravity="center"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/avatar" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -178,7 +181,7 @@
                 android:background="@drawable/button_style"
                 android:fontFamily="casual"
                 android:gravity="center"
-                android:onClick="back"
+                android:onClick="goToUser"
                 android:text="Back"
                 android:textColor="@android:color/white"
                 android:textStyle="bold" />
@@ -195,6 +198,7 @@
                 android:gravity="center"
                 android:text="Update info"
                 android:textColor="@android:color/white"
+                android:onClick="uploadAndSave"
                 android:textStyle="bold" />
 
         </LinearLayout>
