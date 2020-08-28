@@ -34,6 +34,7 @@ public class UserActivity extends AppCompatActivity {
     private ProgressBar progressBar;
 
     private ImageView profileImage;
+    private Button usersBtn;
 
     public UserActivity(){
         CLASS_NAME = getClass().getName();
@@ -53,6 +54,14 @@ public class UserActivity extends AppCompatActivity {
         welcomeText.setText(String.format(WELCOME, activeUser.getName()));
 
         progressBar = (ProgressBar) findViewById(R.id.progressBarUser);
+
+        usersBtn = (Button) findViewById(R.id.usersBtn);
+        if (!activeUser.isAdmin()){
+            usersBtn.setVisibility(View.GONE);
+        }
+        else {
+            usersBtn.setVisibility(View.VISIBLE);
+        }
 
         Button ourPets = (Button) findViewById(R.id.ourPetsBtn);
         ourPets.setOnClickListener(new View.OnClickListener() {
@@ -127,6 +136,12 @@ public class UserActivity extends AppCompatActivity {
         Intent i = new Intent(UserActivity.this, PostsActivity.class);
         startActivity(i);
     }
+
+    public void goToUsers(View view){
+        Intent i = new Intent(UserActivity.this, UsersActivity.class);
+        startActivity(i);
+    }
+
     private void downloadWithTransferUtility(final String photo) {
 
         final String localPath = Environment.getExternalStoragePublicDirectory(

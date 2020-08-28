@@ -7,15 +7,17 @@ public class Post {
     private String id;
     private String text, picture, heading, createdAt;
     private User user;
+    private int approved;
 
     public Post(){}
 
-    public Post(String heading, String text, String picture, User user, String createdAt){
+    public Post(String heading, String text, String picture, User user, String createdAt, int approved){
         this.heading = heading;
         this.text = text;
         this.picture = picture;
         this.user = user;
         this.createdAt = createdAt;
+        this.approved = approved;
     }
 
     public Post(ListPostsQuery.Item post){
@@ -25,6 +27,7 @@ public class Post {
         this.heading = post.heading();
         this.user = new User(post.user());
         this.createdAt = post.createdAt();
+        this.approved = post.approved();
     }
 
     public String getText() {
@@ -69,5 +72,17 @@ public class Post {
 
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getApproved() {
+        return approved;
+    }
+
+    public void setApproved(int approved) {
+        this.approved = approved;
     }
 }

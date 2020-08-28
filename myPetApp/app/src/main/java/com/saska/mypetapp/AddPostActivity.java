@@ -16,6 +16,7 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.saska.mypetapp.db.ClientFactory;
 import com.saska.mypetapp.db.DBHelper;
+import com.saska.mypetapp.db.Post;
 import com.saska.mypetapp.helper.Camera;
 import com.saska.mypetapp.helper.Helper;
 import com.saska.mypetapp.helper.Toaster;
@@ -66,7 +67,13 @@ public class AddPostActivity extends AppCompatActivity {
         else {
             progressBarNewPost.setVisibility(View.VISIBLE);
             Helper.blockTouch(getWindow());
-            uploadWithTransferUtility(camera.getPicturePath());
+            if(camera.getPicturePath() != null){
+                uploadWithTransferUtility(camera.getPicturePath());
+            }
+            else {
+                save();
+            }
+
         }
 
     }
@@ -161,8 +168,21 @@ public class AddPostActivity extends AppCompatActivity {
 
         progressBarNewPost.setVisibility(View.VISIBLE);
         Helper.blockTouch(getWindow());
-        String picture = getS3Key(camera.getPicturePath());
-        DBHelper.addPost(progressBarNewPost, getWindow(), toaster, postHeading.getText().toString(), postText.getText().toString(), AppContext.getContext().getActiveUser(), picture);
+        String picture = null;
+        if (camera.getPicturePath() != null){
+            picture = getS3Key(camera.getPicturePath());
+        }
+        int approved = 0;
+        if (!AppContext.getContext().getActiveUser().isUser()){
+            approved = 1;
+        }
+        Post post = new Post();
+        post.setHeading(postHeading.getText().toString());
+        post.setText(postText.getText().toString());
+        post.setUser(AppContext.getContext().getActiveUser());
+        post.setPicture(picture);
+        post.setApproved(approved);
+        DBHelper.addPost(progressBarNewPost, getWindow(), toaster, post);
 
     }
 

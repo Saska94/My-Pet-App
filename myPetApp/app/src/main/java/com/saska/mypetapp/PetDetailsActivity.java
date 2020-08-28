@@ -32,7 +32,7 @@ public class PetDetailsActivity extends AppCompatActivity {
     ProgressBar progressBarPetDetails;
     Pet selectedPet;
 
-    TextView name, description, location, type;
+    TextView name, description, location, type, chip;
     ImageView petImage;
     boolean isImageFitToScreen;
     Button reserved;
@@ -59,6 +59,8 @@ public class PetDetailsActivity extends AppCompatActivity {
         location.setText(selectedPet.getLocation());
         type = (TextView) findViewById(R.id.detailsType);
         type.setText(selectedPet.getType());
+        chip = (TextView) findViewById(R.id.detailsChip);
+        chip.setText(selectedPet.getChip());
         progressBarPetDetails = (ProgressBar) findViewById(R.id.progressBarPetDetails);
         progressBarPetDetails.setVisibility(View.INVISIBLE);
         petImage = (ImageView) findViewById(R.id.petImage);

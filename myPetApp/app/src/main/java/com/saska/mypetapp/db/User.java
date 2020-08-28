@@ -97,4 +97,16 @@ public class User implements Serializable {
         this.picture = picture;
     }
 
+    public boolean isAdmin(){
+        return type == 3;
+    }
+
+    public boolean isWorker(){
+        return type == 2;
+    }
+
+    public boolean isUser(){
+        return type == 1;
+    }
+
 }

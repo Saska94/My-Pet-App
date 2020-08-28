@@ -14,8 +14,10 @@ public class AppContext {
     private String username;
     private List<Pet> allPets;
     private List<Pet> filteredPets;
+    private List<User> allUsers;
     private Pet selectedPet;
     private Post selectedPost;
+    private User selectedUser;
 
 
     private AppContext(){}
@@ -77,5 +79,21 @@ public class AppContext {
 
     public void setSelectedPost(Post selectedPost) {
         this.selectedPost = selectedPost;
+    }
+
+    public List<User> getAllUsers() {
+        return allUsers;
+    }
+
+    public void setAllUsers(List<User> allUsers) {
+        this.allUsers = allUsers;
+    }
+
+    public User getSelectedUser() {
+        return selectedUser;
+    }
+
+    public void setSelectedUser(User selectedUser) {
+        this.selectedUser = selectedUser;
     }
 }

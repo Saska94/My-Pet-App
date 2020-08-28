@@ -85,6 +85,40 @@
                 android:gravity="center" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/blurBackground"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:fontFamily="casual"
+                android:gravity="center"
+                android:text="Chip :"
+                android:textColor="@color/baseColor"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/filterChip"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/baseColor"
+                android:ems="10"
+                android:fontFamily="casual"
+                android:inputType="textPersonName"
+                android:textColorHint="@color/buttonColor"
+                android:textSize="18sp" />
+        </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"

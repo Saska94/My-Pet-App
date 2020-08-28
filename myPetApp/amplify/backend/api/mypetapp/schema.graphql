@@ -17,6 +17,7 @@ type Pet @model {
   type: String!
   picture: String
   addoption: Int!
+  chip: String
   reserved: Int!
   reservedAt: AWSDateTime
 }
@@ -31,6 +32,7 @@ type Post @model {
   heading: String!
   text: String
   picture: String
+  approved: Int!
   createdAt: AWSDateTime!
   user: User @connection(name: "PostConnection")
 

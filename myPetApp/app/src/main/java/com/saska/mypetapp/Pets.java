@@ -50,7 +50,7 @@ public class Pets extends AppCompatActivity {
     private Switch lostAddoptionSwitch;
     private boolean checked;
 
-    private Button clearFilters;
+    private Button clearFilters, addPet;
 
     public Pets(){
         CLASS_NAME = getClass().getName();
@@ -81,6 +81,13 @@ public class Pets extends AppCompatActivity {
         checked = lostAddoptionSwitch.isChecked();
 
         clearFilters = (Button) findViewById(R.id.clearFilters);
+        addPet = (Button) findViewById(R.id.addPet);
+        if (AppContext.getContext().getActiveUser().isUser()){
+            addPet.setVisibility(View.INVISIBLE);
+        }
+        else {
+            addPet.setVisibility(View.VISIBLE);
+        }
 
         lostAddoptionSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

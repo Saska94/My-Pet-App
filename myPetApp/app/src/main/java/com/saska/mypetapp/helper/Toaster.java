@@ -33,7 +33,7 @@ public class Toaster {
         TextView tv = (TextView) layout.findViewById(R.id.txtvw);
         tv.setText(message);
         Toast toast = new Toast(activity.getApplicationContext());
-        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setDuration(Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
         toast.setView(layout);
         toast.show();

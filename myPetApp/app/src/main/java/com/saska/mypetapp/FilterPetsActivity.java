@@ -2,9 +2,9 @@ package com.saska.mypetapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +23,7 @@ public class FilterPetsActivity extends AppCompatActivity {
 
     private Spinner spinnerPetTypes, spinnerPetLocations;
     private Toaster toaster;
+    private EditText filterChip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,8 @@ public class FilterPetsActivity extends AppCompatActivity {
         adapterLoc.setDropDownViewResource(R.layout.custom_spinner);
         spinnerPetLocations.setAdapter(adapterLoc);
 
+        filterChip = (EditText) findViewById(R.id.filterChip);
+
     }
 
     public void goToPets(View view){
@@ -59,38 +62,58 @@ public class FilterPetsActivity extends AppCompatActivity {
 
         String petType = spinnerPetTypes.getSelectedItem().toString();
         String petLocation = spinnerPetLocations.getSelectedItem().toString();
-        Log.i("ASD", "CRITERIA IS : " + petType + " and " + petLocation);
-        Log.i("ASD", "ALL PETS SIZE IS " + AppContext.getContext().getAllPets().size());
-        List<Pet> filteredPets = new ArrayList<>();
-        for (Pet pet : AppContext.getContext().getAllPets()){
-            Log.i("ASD", "Looking for pet :" + pet.getName() + " , " + pet.getType() + " , " + pet.getLocation());
-            if (petType.isEmpty() && petLocation.isEmpty()){
-                toaster.make("You haven't selected any filters.");
-                return;
-            }
-            else if (!petType.isEmpty() && !petLocation.isEmpty()){
-                if (petType.equals(pet.getType()) && petLocation.equals(pet.getLocation())){
-                    Log.i("ASD", "PET ADDED TO FILTER - " + pet.getName());
-                    filteredPets.add(pet);
-                }
-            }
-            else if (petType.isEmpty()){
-                if (petLocation.equals(pet.getLocation())){
-                    Log.i("ASD", "PET ADDED TO FILTER - " + pet.getName());
-                    filteredPets.add(pet);
-                }
-            }
-            else {
-                if (petType.equals(pet.getType())){
-                    Log.i("ASD", "PET ADDED TO FILTER - " + pet.getName());
-                    filteredPets.add(pet);
-                }
-            }
+        String chip = filterChip.getText().toString();
 
-
+        if (petType.isEmpty() && petLocation.isEmpty() && chip.isEmpty()){
+            toaster.make("You haven't selected any filters.");
+            return;
         }
+
+        List<Pet> filteredPets = AppContext.getContext().getAllPets();
+        if (!petType.isEmpty()){
+            filteredPets = findPetsByType(filteredPets, petType);
+        }
+        if (!petLocation.isEmpty()){
+            filteredPets = findPetsByLocation(filteredPets, petLocation);
+        }
+        if (!chip.isEmpty()){
+            filteredPets = findPetsByChip(filteredPets, chip);
+        }
+
         AppContext.getContext().setFilteredPets(filteredPets);
         goToPets(view);
 
     }
+
+    private List<Pet> findPetsByType(List<Pet> list, String type){
+        List<Pet> result = new ArrayList<>();
+        for (Pet pet : list){
+            if (type.equals(pet.getType())){
+                result.add(pet);
+            }
+        }
+        return result;
+    }
+
+    private List<Pet> findPetsByLocation(List<Pet> list, String location){
+        List<Pet> result = new ArrayList<>();
+        for (Pet pet : list){
+            if (location.equals(pet.getLocation())){
+                result.add(pet);
+            }
+        }
+        return result;
+    }
+
+    private List<Pet> findPetsByChip(List<Pet> list, String chip){
+        List<Pet> result = new ArrayList<>();
+        for (Pet pet : list){
+            if (chip.equals(pet.getChip())){
+                result.add(pet);
+            }
+        }
+        return result;
+    }
+
+
 }

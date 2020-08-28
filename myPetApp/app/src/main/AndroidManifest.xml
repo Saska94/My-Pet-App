@@ -17,7 +17,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PostDetailsActivity"></activity>
+        <activity android:name=".UserDetailsActivity"></activity>
+        <activity android:name=".UsersActivity" />
+        <activity android:name=".PostDetailsActivity" />
         <activity android:name=".AddPostActivity" />
         <activity android:name=".PostsActivity" />
         <activity android:name=".FilterPetsActivity" />

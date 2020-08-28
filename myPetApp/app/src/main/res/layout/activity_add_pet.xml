@@ -125,6 +125,21 @@
                 android:textColorHint="@color/buttonColor"
                 android:textSize="18sp" />
 
+            <EditText
+                android:id="@+id/petChip"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/baseColor"
+                android:ems="10"
+                android:fontFamily="casual"
+                android:hint="chip"
+                android:inputType="textPersonName"
+                android:textColorHint="@color/buttonColor"
+                android:textSize="18sp" />
+
             <Spinner
                 android:id="@+id/petType"
                 android:layout_width="wrap_content"

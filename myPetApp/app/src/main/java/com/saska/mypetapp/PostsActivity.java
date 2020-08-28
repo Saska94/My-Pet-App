@@ -4,7 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +23,7 @@ import com.apollographql.apollo.exception.ApolloException;
 import com.saska.mypetapp.db.ClientFactory;
 import com.saska.mypetapp.db.Post;
 import com.saska.mypetapp.helper.MyPostsAdapter;
+import com.saska.mypetapp.singletons.AppContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +38,12 @@ public class PostsActivity extends AppCompatActivity {
 
     private ArrayList<ListPostsQuery.Item> posts;
     private TextView emptyMsg;
-    private List<Post> postList;
+    private List<Post> allPosts;
     ProgressBar progressBarPosts;
+    private Button addPostBtn;
+    private LinearLayout approvedLayout;
+    private Switch approvedSwitch;
+    boolean checked;
 
 
     public PostsActivity(){
@@ -62,6 +71,41 @@ public class PostsActivity extends AppCompatActivity {
         progressBarPosts.setVisibility(View.INVISIBLE);
         mAdapter.setProgressBarPosts(progressBarPosts);
 
+        approvedLayout = (LinearLayout) findViewById(R.id.approvedLayout);
+        if (!AppContext.getContext().getActiveUser().isAdmin()){
+            approvedLayout.setVisibility(View.GONE);
+        }
+        else {
+            approvedLayout.setVisibility(View.VISIBLE);
+        }
+
+        approvedSwitch = (Switch) findViewById(R.id.approvedSwitch);
+        approvedSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                checked = isChecked;
+                loadSwitchItems();
+            }
+        });
+
+    }
+
+    private void loadSwitchItems(){
+        List<Post> listToView = new ArrayList<>();
+        for(Post post : allPosts){
+            if ((checked && post.getApproved()==0) || (!checked && post.getApproved()==1)){
+                listToView.add(post);
+            }
+        }
+        mAdapter.setItems(listToView);
+        mAdapter.notifyDataSetChanged();
+
+        if(listToView.isEmpty()){
+            emptyMsg.setVisibility(View.VISIBLE);
+        }
+        else {
+            emptyMsg.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -88,21 +132,13 @@ public class PostsActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    postList = new ArrayList<>();
+                    allPosts = new ArrayList<>();
                     for (ListPostsQuery.Item post: posts) {
                         Post dbPost = new Post(post);
-                        postList.add(dbPost);
+                        allPosts.add(dbPost);
                     }
-                    mAdapter.setItems(postList);
-                    mAdapter.notifyDataSetChanged();
-                    if(postList.isEmpty()){
-                        Log.i(CLASS_NAME, "setting text to visible");
-                        emptyMsg.setVisibility(View.VISIBLE);
-                    }
-                    else {
-                        emptyMsg.setVisibility(View.INVISIBLE);
-                        Log.i(CLASS_NAME, "setting text to invisible");
-                    }
+                    mAdapter.setItems(allPosts);
+                    loadSwitchItems();
                 }
             });
         }

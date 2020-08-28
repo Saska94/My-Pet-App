@@ -171,6 +171,7 @@ public class AddPetActivity extends AppCompatActivity {
         String name = ((EditText) findViewById(R.id.petName)).getText().toString();
         String description =((EditText) findViewById(R.id.petDescription)).getText().toString();
         String location = ((EditText) findViewById(R.id.petLocation)).getText().toString();
+        String petChip = ((EditText) findViewById(R.id.petChip)).getText().toString();
 
         if (name.isEmpty() || location.isEmpty()){
             progressBarAddPet.setVisibility(View.INVISIBLE);
@@ -189,6 +190,7 @@ public class AddPetActivity extends AppCompatActivity {
             pet.setName(name);
             pet.setLocation(location);
             pet.setPicture(picture);
+            pet.setChip(petChip);
             DBHelper.addPet(toaster, progressBarAddPet, getWindow(), pet);
         }
 

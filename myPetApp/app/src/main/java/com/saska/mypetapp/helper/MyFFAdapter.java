@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.saska.mypetapp.R;
 import com.saska.mypetapp.db.DBHelper;
 import com.saska.mypetapp.db.FFact;
+import com.saska.mypetapp.singletons.AppContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,35 +76,44 @@ public class MyFFAdapter extends RecyclerView.Adapter<MyFFAdapter.ViewHolder> {
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    System.out.println("LOOOONGGGG PRESS");
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setCancelable(true);
-                    builder.setTitle("Delete Fun Fact");
-                    builder.setMessage("Are you sure you want to delete selected fun fact?");
-                    builder.setPositiveButton("Confirm",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    FFact toRemove = null;
-                                    for(FFact fact :mData){
-                                        if (ff_text.getText().toString().equals(fact.getText())){
-                                            Log.i("QQ", "DELETE-ING FF : " + fact.getText() + "WITH ID : " + fact.getId());
-                                            toRemove = fact;
-                                            break;
+                    if (AppContext.getContext().getActiveUser().isUser()){
+                        builder.setTitle("Fun Fact");
+                        builder.setMessage(ff_text.getText().toString());
+                        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                    }
+                    else{
+                        builder.setTitle("Delete Fun Fact");
+                        builder.setMessage("Are you sure you want to delete selected fun fact?");
+                        builder.setPositiveButton("Confirm",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        FFact toRemove = null;
+                                        for(FFact fact :mData){
+                                            if (ff_text.getText().toString().equals(fact.getText())){
+                                                toRemove = fact;
+                                                break;
+                                            }
+                                        }
+                                        if (toRemove != null){
+                                            removeAt(getPosition());
+                                            DBHelper.deleteFunFact(toRemove.getId());
                                         }
                                     }
-                                    if (toRemove != null){
-                                        Log.i("QQ", "WHICH IS : " + getPosition());
-                                        removeAt(getPosition());
-                                        DBHelper.deleteFunFact(toRemove.getId());
-                                    }
-                                }
-                            });
-                    builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    });
+                                });
+                        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                    }
+
 
                     AlertDialog dialog = builder.create();
                     dialog.show();

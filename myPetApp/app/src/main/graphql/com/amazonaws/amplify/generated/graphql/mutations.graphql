@@ -17,6 +17,7 @@ mutation CreateUser(
         heading
         text
         picture
+        approved
         createdAt
         updatedAt
       }
@@ -44,6 +45,7 @@ mutation UpdateUser(
         heading
         text
         picture
+        approved
         createdAt
         updatedAt
       }
@@ -71,6 +73,7 @@ mutation DeleteUser(
         heading
         text
         picture
+        approved
         createdAt
         updatedAt
       }
@@ -92,6 +95,7 @@ mutation CreatePet(
     type
     picture
     addoption
+    chip
     reserved
     reservedAt
     createdAt
@@ -110,6 +114,7 @@ mutation UpdatePet(
     type
     picture
     addoption
+    chip
     reserved
     reservedAt
     createdAt
@@ -128,6 +133,7 @@ mutation DeletePet(
     type
     picture
     addoption
+    chip
     reserved
     reservedAt
     createdAt
@@ -176,6 +182,7 @@ mutation CreatePost(
     heading
     text
     picture
+    approved
     createdAt
     user {
       id
@@ -203,6 +210,7 @@ mutation UpdatePost(
     heading
     text
     picture
+    approved
     createdAt
     user {
       id
@@ -230,6 +238,7 @@ mutation DeletePost(
     heading
     text
     picture
+    approved
     createdAt
     user {
       id

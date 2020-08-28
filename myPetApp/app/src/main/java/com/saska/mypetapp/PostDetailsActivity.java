@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -35,6 +36,8 @@ public class PostDetailsActivity extends AppCompatActivity {
     private Toaster toaster;
     private ImageView postImage;
 
+    private Button deletePostBtn, approvePostBtn;
+
     public PostDetailsActivity(){
         CLASS_NAME = getClass().getName();
     }
@@ -60,6 +63,22 @@ public class PostDetailsActivity extends AppCompatActivity {
         progressBarPostDetails.setVisibility(View.INVISIBLE);
         postImage = (ImageView) findViewById(R.id.postDetailsImage);
         toaster = new Toaster(this);
+
+        deletePostBtn = (Button) findViewById(R.id.deletePostBtn);
+        if (AppContext.getContext().getActiveUser().isUser() && (!AppContext.getContext().getActiveUser().getIdUser().equals(selectedPost.getUser().getIdUser()))){
+            deletePostBtn.setVisibility(View.INVISIBLE);
+        }
+        else {
+            deletePostBtn.setVisibility(View.VISIBLE);
+        }
+
+        approvePostBtn = (Button) findViewById(R.id.approvePostBtn);
+        if (!AppContext.getContext().getActiveUser().isAdmin()){
+            approvePostBtn.setVisibility(View.GONE);
+        }
+        else {
+            approvePostBtn.setVisibility(View.VISIBLE);
+        }
 
         loadPostImage();
 
@@ -138,6 +157,13 @@ public class PostDetailsActivity extends AppCompatActivity {
                 Helper.unblockTouch(getWindow());
             }
         });
+    }
+
+    public void approvePost(View view){
+        progressBarPostDetails.setVisibility(View.VISIBLE);
+        Helper.blockTouch(getWindow());
+        selectedPost.setApproved(1);
+        DBHelper.updatePost(progressBarPostDetails, getWindow(), toaster, selectedPost);
     }
 
 }

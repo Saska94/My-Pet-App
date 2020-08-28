@@ -9,18 +9,19 @@ import java.io.Serializable;
 public class Pet implements Serializable {
 
     private int adoption, reserved;
-    private String id, name, description, location, type, picture;
+    private String id, name, description, location, type, picture, chip;
     private Bitmap imageBitmap;
 
     public Pet(){}
 
-    public Pet(String name, String description, String location, String type, String picture,int reserved) {
+    public Pet(String name, String description, String location, String type, String picture,int reserved, String chip) {
         this.name = name;
         this.description = description;
         this.location = location;
         this.type = type;
         this.picture = picture;
         this.reserved = reserved;
+        this.chip = chip;
     }
 
     public Pet(ListPetsQuery.Item pet){
@@ -32,6 +33,7 @@ public class Pet implements Serializable {
         this.picture = pet.picture();
         this.adoption = pet.addoption();
         this.reserved = pet.reserved();
+        this.chip = pet.chip();
     }
 
     public String getId() {
@@ -104,5 +106,13 @@ public class Pet implements Serializable {
 
     public void setReserved(int reserved) {
         this.reserved = reserved;
+    }
+
+    public String getChip() {
+        return chip;
+    }
+
+    public void setChip(String chip) {
+        this.chip = chip;
     }
 }

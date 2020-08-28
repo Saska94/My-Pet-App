@@ -21,7 +21,6 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
-import com.amazonaws.services.cognitoidentityprovider.model.InvalidPasswordException;
 import com.amazonaws.services.cognitoidentityprovider.model.UsernameExistsException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.saska.mypetapp.MainActivity;
@@ -37,7 +36,6 @@ import com.saska.mypetapp.singletons.AppContext;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -149,12 +147,12 @@ public class AwsClient {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Log.i("QQQ", e.getMessage());
                         if (e instanceof UsernameExistsException) {
                             toaster.make("Username Exists");
                             //Toast.makeText(activity, "Username Exists", Toast.LENGTH_SHORT).show();
-                        } else if (e instanceof InvalidParameterException || e instanceof InvalidPasswordException) {
-                            //Toast.makeText(activity, "Username Exists", Toast.LENGTH_SHORT).show();
-                            toaster.make("Invalid password");
+                        } else if (e.getMessage().contains("Password not long enough")) {
+                            toaster.make("Password must contain at least 8 characters.");
                         }
                         Log.e(CLASS_NAME, "Sign-up error", e);
                     }

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import com.saska.mypetapp.db.FFact;
 import com.saska.mypetapp.helper.Helper;
 import com.saska.mypetapp.helper.MyFFAdapter;
 import com.saska.mypetapp.helper.Toaster;
+import com.saska.mypetapp.singletons.AppContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,9 @@ public class FunFactsActivity extends AppCompatActivity {
     private TextView emptyMsg;
     private Toaster toaster;
     private ProgressBar progressBarFF;
+
+    private EditText ffText;
+    private Button addFFBtn;
 
     public FunFactsActivity(){
         CLASS_NAME = getClass().getName();
@@ -64,6 +69,17 @@ public class FunFactsActivity extends AppCompatActivity {
 
         progressBarFF = (ProgressBar) findViewById(R.id.progressBarFF);
         progressBarFF.setVisibility(View.INVISIBLE);
+
+        ffText = (EditText) findViewById(R.id.fun_fact_text);
+        addFFBtn = (Button) findViewById(R.id.addFact);
+        if(AppContext.getContext().getActiveUser().isUser()){
+            ffText.setVisibility(View.GONE);
+            addFFBtn.setVisibility(View.INVISIBLE);
+        }
+        else {
+            ffText.setVisibility(View.VISIBLE);
+            addFFBtn.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -122,7 +138,6 @@ public class FunFactsActivity extends AppCompatActivity {
 
 
     public void addFunFact(View view){
-        EditText ffText = (EditText) findViewById(R.id.fun_fact_text);
         if (ffText.getText().toString().isEmpty()){
             toaster.make("Please fill in the fun fact text");
         }

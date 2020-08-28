@@ -16,10 +16,12 @@ import com.amazonaws.amplify.generated.graphql.CreateUserMutation;
 import com.amazonaws.amplify.generated.graphql.DeleteFFactMutation;
 import com.amazonaws.amplify.generated.graphql.DeletePetMutation;
 import com.amazonaws.amplify.generated.graphql.DeletePostMutation;
+import com.amazonaws.amplify.generated.graphql.DeleteUserMutation;
 import com.amazonaws.amplify.generated.graphql.ListPetsQuery;
 import com.amazonaws.amplify.generated.graphql.ListPostsQuery;
 import com.amazonaws.amplify.generated.graphql.ListUsersQuery;
 import com.amazonaws.amplify.generated.graphql.UpdatePetMutation;
+import com.amazonaws.amplify.generated.graphql.UpdatePostMutation;
 import com.amazonaws.amplify.generated.graphql.UpdateUserMutation;
 import com.amazonaws.mobileconnectors.appsync.fetcher.AppSyncResponseFetchers;
 import com.apollographql.apollo.GraphQLCall;
@@ -29,6 +31,8 @@ import com.saska.mypetapp.PetDetailsActivity;
 import com.saska.mypetapp.Pets;
 import com.saska.mypetapp.PostDetailsActivity;
 import com.saska.mypetapp.PostsActivity;
+import com.saska.mypetapp.UserDetailsActivity;
+import com.saska.mypetapp.UsersActivity;
 import com.saska.mypetapp.helper.Helper;
 import com.saska.mypetapp.helper.LoginHelper;
 import com.saska.mypetapp.helper.Toaster;
@@ -46,11 +50,13 @@ import type.CreateUserInput;
 import type.DeleteFFactInput;
 import type.DeletePetInput;
 import type.DeletePostInput;
+import type.DeleteUserInput;
 import type.ModelPetFilterInput;
 import type.ModelPostFilterInput;
 import type.ModelStringInput;
 import type.ModelUserFilterInput;
 import type.UpdatePetInput;
+import type.UpdatePostInput;
 import type.UpdateUserInput;
 
 import static com.amazonaws.mobile.auth.core.internal.util.ThreadUtils.runOnUiThread;
@@ -152,6 +158,7 @@ public class DBHelper {
                 .surname(user.getSurname())
                 .phone(user.getPhone())
                 .profilePicture(user.getPicture())
+                .type(user.getType())
                 .build();
 
         GraphQLCall.Callback<UpdateUserMutation.Data> mutateCallback = new GraphQLCall.Callback<UpdateUserMutation.Data>() {
@@ -161,7 +168,7 @@ public class DBHelper {
                     @Override
                     public void run() {
                         Log.i(CLASS_NAME, "User updated!");
-                        toaster.make("Profile info updated!");
+                        toaster.make("User updated!");
                         progressBar.setVisibility(View.INVISIBLE);
                         Helper.unblockTouch(window);
                     }
@@ -236,6 +243,88 @@ public class DBHelper {
 
     }
 
+    public static void loadUserDetails(final ProgressBar progressBar, final Context context, String username){
+
+        GraphQLCall.Callback<ListUsersQuery.Data> queryCallback = new GraphQLCall.Callback<ListUsersQuery.Data>() {
+            @Override
+            public void onResponse(@Nonnull final Response<ListUsersQuery.Data> response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        user = new ArrayList<>(response.data().listUsers().items()).get(0);
+                        User dbUser = new User(user);
+                        AppContext.getContext().setSelectedUser(dbUser);
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(((Activity)context).getWindow());
+
+                        Intent details = new Intent((Activity)context, UserDetailsActivity.class);
+                        ((Activity)context).startActivity(details);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(@Nonnull final ApolloException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(CLASS_NAME, "Failure");
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(((Activity)context).getWindow());
+                    }
+                });
+            }
+        };
+
+        ModelStringInput modelStringInput = ModelStringInput.builder().eq(username).build();
+        ModelUserFilterInput modelPetFilterInput = ModelUserFilterInput.builder().username(modelStringInput).build();
+        ClientFactory.appSyncClient().query(ListUsersQuery.builder().filter(modelPetFilterInput).build())
+                .enqueue(queryCallback);
+    }
+
+    public static void deleteUser(final ProgressBar progressBar, final Window window, final Toaster toaster, final Activity activity, String idUser){
+        DeleteUserInput input = DeleteUserInput.builder()
+                .id(idUser)
+                .build();
+
+        GraphQLCall.Callback<DeleteUserMutation.Data> mutateCallback = new GraphQLCall.Callback<DeleteUserMutation.Data>() {
+            @Override
+            public void onResponse(@Nonnull final Response<DeleteUserMutation.Data> response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(CLASS_NAME, "User deleted!");
+                        toaster.make("User deleted!");
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(window);
+                        Intent intent = new Intent(activity, UsersActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        activity.getApplicationContext().startActivity(intent);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(@Nonnull final ApolloException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(CLASS_NAME, "Failed to delete user!");
+                        toaster.make("Something went wrong!");
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(window);
+                    }
+                });
+            }
+        };
+
+        DeleteUserMutation deleteUserMutation = DeleteUserMutation.builder()
+                .input(input)
+                .build();
+        ClientFactory.appSyncClient().mutate(deleteUserMutation).enqueue(mutateCallback);
+
+    }
+
 
     // PETS
 
@@ -249,6 +338,7 @@ public class DBHelper {
                 .addoption(pet.getAdoption())
                 .picture(pet.getPicture())
                 .reserved(pet.getReserved())
+                .chip(pet.getChip())
                 .build();
 
         // Mutation callback code
@@ -501,13 +591,14 @@ public class DBHelper {
 
         // Posts
 
-    public static void addPost(final ProgressBar progressBarPost, final Window window, final Toaster toaster,  String heading, String text, User user, final String picture){
+    public static void addPost(final ProgressBar progressBarPost, final Window window, final Toaster toaster,  final Post post){
 
         CreatePostInput input = CreatePostInput.builder()
-                .heading(heading)
-                .text(text)
-                .postUserId(user.getIdUser())
-                .picture(picture)
+                .heading(post.getHeading())
+                .text(post.getText())
+                .postUserId(post.getUser().getIdUser())
+                .picture(post.getPicture())
+                .approved(post.getApproved())
                 .build();
 
         // Mutation callback code
@@ -627,6 +718,47 @@ public class DBHelper {
                 .input(input)
                 .build();
         ClientFactory.appSyncClient().mutate(deletePostMutation).enqueue(mutateCallback);
+
+    }
+
+    public static void updatePost(final ProgressBar progressBar, final Window window, final Toaster toaster,Post post){
+        UpdatePostInput input = UpdatePostInput.builder()
+                .id(post.getId())
+                .approved(post.getApproved())
+                .build();
+
+        GraphQLCall.Callback<UpdatePostMutation.Data> mutateCallback = new GraphQLCall.Callback<UpdatePostMutation.Data>() {
+            @Override
+            public void onResponse(@Nonnull final Response<UpdatePostMutation.Data> response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(CLASS_NAME, "Post updated!");
+                        toaster.make("Post updated!");
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(window);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(@Nonnull final ApolloException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(CLASS_NAME, "Failed to update post!");
+                        toaster.make("Something went wrong!");
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Helper.unblockTouch(window);
+                    }
+                });
+            }
+        };
+
+        UpdatePostMutation updatePostMutation = UpdatePostMutation.builder()
+                .input(input)
+                .build();
+        ClientFactory.appSyncClient().mutate(updatePostMutation).enqueue(mutateCallback);
 
     }
 
